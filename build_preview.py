@@ -2469,8 +2469,7 @@ html_content = '''<!DOCTYPE html>
         overlay.style.display = 'none';
         console.error('Diagnosis error:', err);
         showToast(`❌ Diagnosis failed: ${err.message}`);
-        // Fallback info notice
-        alert(`Could not connect to FastAPI backend at ${API_BASE}.\nPlease ensure the backend is running with:\npython -m uvicorn backend.main:app --port 8000\n\nError: ${err.message}`);
+        alert(`AI Plant Diagnosis Error:\n${err.message}`);
       }
     }
 

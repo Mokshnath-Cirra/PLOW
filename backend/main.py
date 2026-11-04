@@ -132,42 +132,45 @@ async def call_gemini_vision(img: Image.Image, custom_key: Optional[str] = None)
     img.save(buffer, format="JPEG", quality=88)
     image_bytes = buffer.getvalue()
 
-    # Try modern google-genai SDK first
-    try:
-        from google import genai
-        from google.genai import types
+    # List of supported models in priority order
+    candidate_models = [
+        "gemini-2.0-flash",
+        "gemini-2.5-flash",
+        "gemini-2.0-flash-exp",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-pro",
+    ]
 
-        client = genai.Client(api_key=key)
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=[
-                types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
-                ANALYSIS_SYSTEM_PROMPT
-            ],
-            config=types.GenerateContentConfig(
-                temperature=0.2,
-                response_mime_type="application/json",
-            )
-        )
-        cleaned = clean_json_string(response.text or "{}")
-        return json.loads(cleaned)
-    except Exception as e:
-        # Fallback to google.generativeai if available
+    last_error = None
+    for model_name in candidate_models:
         try:
-            import google.generativeai as legacy_genai
-            legacy_genai.configure(api_key=key)
-            model = legacy_genai.GenerativeModel("gemini-1.5-flash")
-            response = model.generate_content([
-                ANALYSIS_SYSTEM_PROMPT,
-                img
-            ])
+            from google import genai
+            from google.genai import types
+
+            client = genai.Client(api_key=key)
+            response = client.models.generate_content(
+                model=model_name,
+                contents=[
+                    types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
+                    ANALYSIS_SYSTEM_PROMPT
+                ],
+                config=types.GenerateContentConfig(
+                    temperature=0.2,
+                    response_mime_type="application/json",
+                )
+            )
             cleaned = clean_json_string(response.text or "{}")
             return json.loads(cleaned)
-        except Exception as e_inner:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Gemini API execution failed: {str(e_inner or e)}"
-            )
+        except Exception as e:
+            last_error = e
+            print(f"[Gemini Vision] Model {model_name} failed: {e}")
+            continue
+
+    # If all models failed, raise informative error
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail=f"Gemini API execution failed: {str(last_error)}"
+    )
 
 @app.get("/")
 def root():
@@ -296,26 +299,33 @@ async def agronomist_chat(
         f"Emphasize organic solutions, proper watering, and pathogen prevention."
     )
 
-    try:
-        from google import genai
-        client = genai.Client(api_key=key)
-        prompt = f"{system_instruction}\n\nUser Question: {req.message}"
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-        )
-        return {"reply": response.text or "I recommend checking soil moisture and isolating the plant."}
-    except Exception as e:
+    prompt = f"{system_instruction}\n\nUser Question: {req.message}"
+    candidate_chat_models = [
+        "gemini-2.0-flash",
+        "gemini-2.5-flash",
+        "gemini-2.0-flash-exp",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-pro",
+    ]
+
+    last_chat_err = None
+    for model_name in candidate_chat_models:
         try:
-            import google.generativeai as legacy_genai
-            legacy_genai.configure(api_key=key)
-            model = legacy_genai.GenerativeModel("gemini-1.5-flash")
-            response = model.generate_content(f"{system_instruction}\n\nUser Question: {req.message}")
-            return {"reply": response.text or "I recommend checking soil moisture and isolating the plant."}
-        except Exception as e2:
-            return {
-                "reply": f"Agronomist advice currently unavailable ({str(e2 or e)}). Please follow the recommended treatment plan."
-            }
+            from google import genai
+            client = genai.Client(api_key=key)
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+            )
+            if response.text:
+                return {"reply": response.text}
+        except Exception as e:
+            last_chat_err = e
+            continue
+
+    return {
+        "reply": f"Agronomist advice currently unavailable ({str(last_chat_err)}). Please consult the treatment and care tips listed in the dossier."
+    }
 
 if __name__ == "__main__":
     import uvicorn
