@@ -6,6 +6,9 @@ from typing import Optional, List, Dict, Any
 from pathlib import Path
 from dotenv import load_dotenv
 
+import base64
+import urllib.request
+import urllib.error
 from fastapi import FastAPI, File, UploadFile, HTTPException, Header, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -118,9 +121,84 @@ def resize_image(image_bytes: bytes, max_size: int = 1024) -> Image.Image:
         img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
     return img
 
+def discover_gemini_models(api_key: str) -> List[str]:
+    """Query Google ModelService to find models supporting generateContent for this key."""
+    url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "FloraScan-PLOW/2.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            models = data.get("models", [])
+            valid = []
+            for m in models:
+                methods = m.get("supportedGenerationMethods", [])
+                if "generateContent" in methods:
+                    name = m.get("name", "")
+                    if name.startswith("models/"):
+                        name = name[7:]
+                    valid.append(name)
+            return valid
+    except urllib.error.HTTPError as he:
+        body = he.read().decode("utf-8", errors="ignore")
+        print(f"[ModelDiscovery] HTTP {he.code}: {body}", flush=True)
+        try:
+            err_json = json.loads(body)
+            msg = err_json.get("error", {}).get("message", body)
+            raise HTTPException(
+                status_code=he.code if he.code in (400, 401, 403) else 500,
+                detail=f"Google Gemini Error: {msg}"
+            )
+        except HTTPException:
+            raise
+        except Exception:
+            raise HTTPException(status_code=500, detail=f"Google Gemini HTTP {he.code}: {body}")
+    except Exception as ex:
+        print(f"[ModelDiscovery] Discovery warning: {ex}", flush=True)
+        return []
+
+def call_gemini_rest_vision(model_name: str, api_key: str, image_bytes: bytes, prompt: str) -> Dict[str, Any]:
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    b64_img = base64.b64encode(image_bytes).decode("utf-8")
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "inline_data": {
+                            "mime_type": "image/jpeg",
+                            "data": b64_img
+                        }
+                    },
+                    {
+                        "text": prompt
+                    }
+                ]
+            }
+        ],
+        "generationConfig": {
+            "temperature": 0.2
+        }
+    }
+    data_bytes = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data_bytes,
+        headers={"Content-Type": "application/json", "User-Agent": "FloraScan-PLOW/2.0"},
+        method="POST"
+    )
+    with urllib.request.urlopen(req, timeout=35) as resp:
+        res_json = json.loads(resp.read().decode("utf-8"))
+        candidates = res_json.get("candidates", [])
+        if not candidates:
+            raise ValueError("No candidates returned from Gemini Vision model")
+        parts = candidates[0].get("content", {}).get("parts", [])
+        raw_text = parts[0].get("text", "{}") if parts else "{}"
+        cleaned = clean_json_string(raw_text)
+        return json.loads(cleaned)
+
 async def call_gemini_vision(img: Image.Image, custom_key: Optional[str] = None) -> Dict[str, Any]:
-    """Call Gemini Vision API via google-genai or google.generativeai."""
-    key = (custom_key or os.getenv("GEMINI_API_KEY", "")).strip()
+    """Call Gemini Vision API via direct Google REST API with dynamic model discovery."""
+    key = (custom_key or os.getenv("GEMINI_API_KEY", "")).strip().strip("'").strip('"')
     if not key:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -132,38 +210,35 @@ async def call_gemini_vision(img: Image.Image, custom_key: Optional[str] = None)
     img.save(buffer, format="JPEG", quality=88)
     image_bytes = buffer.getvalue()
 
-    # List of supported models in priority order
-    candidate_models = [
+    # Discover models supported for this key
+    discovered = discover_gemini_models(key)
+    print(f"[Gemini Vision] Discovered active models: {discovered}", flush=True)
+
+    # Sort discovered models: prioritize 2.0-flash, 2.5-flash, other flash, then pro
+    def model_priority(m: str) -> int:
+        if "2.0-flash" in m: return 0
+        if "2.5-flash" in m: return 1
+        if "flash" in m: return 2
+        if "pro" in m: return 3
+        return 4
+
+    candidate_models = sorted(discovered, key=model_priority) if discovered else [
         "gemini-2.0-flash",
         "gemini-2.5-flash",
         "gemini-2.0-flash-exp",
-        "gemini-1.5-flash-latest",
-        "gemini-1.5-pro",
+        "gemini-1.5-flash-latest"
     ]
 
     last_error = None
     for model_name in candidate_models:
         try:
-            from google import genai
-            from google.genai import types
-
-            client = genai.Client(api_key=key)
-            response = client.models.generate_content(
-                model=model_name,
-                contents=[
-                    types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
-                    ANALYSIS_SYSTEM_PROMPT
-                ],
-                config=types.GenerateContentConfig(
-                    temperature=0.2,
-                    response_mime_type="application/json",
-                )
-            )
-            cleaned = clean_json_string(response.text or "{}")
-            return json.loads(cleaned)
+            print(f"[Gemini Vision] Attempting model: {model_name}...", flush=True)
+            result = call_gemini_rest_vision(model_name, key, image_bytes, ANALYSIS_SYSTEM_PROMPT)
+            print(f"[Gemini Vision] Success with {model_name}!", flush=True)
+            return result
         except Exception as e:
             last_error = e
-            print(f"[Gemini Vision] Model {model_name} failed: {e}")
+            print(f"[Gemini Vision] Model {model_name} failed: {e}", flush=True)
             continue
 
     # If all models failed, raise informative error
@@ -300,25 +375,37 @@ async def agronomist_chat(
     )
 
     prompt = f"{system_instruction}\n\nUser Question: {req.message}"
-    candidate_chat_models = [
+    discovered = discover_gemini_models(key)
+    candidate_chat_models = discovered if discovered else [
         "gemini-2.0-flash",
         "gemini-2.5-flash",
         "gemini-2.0-flash-exp",
-        "gemini-1.5-flash-latest",
-        "gemini-1.5-pro",
+        "gemini-1.5-flash-latest"
     ]
 
     last_chat_err = None
     for model_name in candidate_chat_models:
         try:
-            from google import genai
-            client = genai.Client(api_key=key)
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt,
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0.7}
+            }
+            data_bytes = json.dumps(payload).encode("utf-8")
+            req_chat = urllib.request.Request(
+                url,
+                data=data_bytes,
+                headers={"Content-Type": "application/json", "User-Agent": "FloraScan-PLOW/2.0"},
+                method="POST"
             )
-            if response.text:
-                return {"reply": response.text}
+            with urllib.request.urlopen(req_chat, timeout=25) as resp:
+                res_json = json.loads(resp.read().decode("utf-8"))
+                candidates = res_json.get("candidates", [])
+                if candidates:
+                    parts = candidates[0].get("content", {}).get("parts", [])
+                    txt = parts[0].get("text", "") if parts else ""
+                    if txt:
+                        return {"reply": txt}
         except Exception as e:
             last_chat_err = e
             continue
