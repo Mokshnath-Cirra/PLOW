@@ -1,0 +1,957 @@
+[
+  {
+    "id": "dis_early_blight",
+    "name": "Early Blight",
+    "scientific_name": "Alternaria solani",
+    "type": "fungal",
+    "crops_affected": [
+      "tomato",
+      "potato",
+      "eggplant",
+      "chili"
+    ],
+    "symptoms": [
+      "Concentric dark brown bullseye rings on older foliage",
+      "Yellow chlorotic halos around lesions",
+      "Premature lower defoliation"
+    ],
+    "causes": [
+      "High humidity (>75%) and leaf wetness > 4 hours",
+      "Soil-borne fungal spores splashing onto foliage",
+      "Warm temperatures (24-29°C)"
+    ],
+    "treatment_organic": "Apply organic copper octanoate or Bacillus subtilis spray every 7 days. Remove lower leaves.",
+    "treatment_chemical": "Chlorothalonil, Mancozeb, or Azoxystrobin spray following manufacturer instructions.",
+    "prevention": "Drip irrigation only; stake plants; space 24 inches apart; 3-year crop rotation."
+  },
+  {
+    "id": "dis_late_blight",
+    "name": "Late Blight",
+    "scientific_name": "Phytophthora infestans",
+    "type": "oomycete",
+    "crops_affected": [
+      "tomato",
+      "potato"
+    ],
+    "symptoms": [
+      "Water-soaked dark lesions on leaf tips",
+      "White fuzzy fungal growth under leaves in moist air",
+      "Rapid plant collapse"
+    ],
+    "causes": [
+      "Cool, wet conditions (15-20°C)",
+      "Prolonged leaf wetness",
+      "Airborne sporangia"
+    ],
+    "treatment_organic": "Copper-based fungicides applied preventatively. Prune and destroy infected stems immediately.",
+    "treatment_chemical": "Metalaxyl, Cymoxanil, or Dimethomorph systemic fungicides.",
+    "prevention": "Plant resistant cultivars; avoid overhead watering; ensure wide row spacing."
+  },
+  {
+    "id": "dis_powdery_mildew",
+    "name": "Powdery Mildew",
+    "scientific_name": "Podosphaera / Erysiphe spp.",
+    "type": "fungal",
+    "crops_affected": [
+      "rose",
+      "cucumber",
+      "mango",
+      "zucchini",
+      "grape",
+      "hibiscus",
+      "tulsi"
+    ],
+    "symptoms": [
+      "White powdery talc-like coating on upper leaf surfaces",
+      "Curling, yellowing, or distorted young foliage",
+      "Stunted buds"
+    ],
+    "causes": [
+      "Dry leaf surfaces with high ambient humidity",
+      "Poor air circulation in dense canopy",
+      "Moderate temperatures (20-27°C)"
+    ],
+    "treatment_organic": "Potassium bicarbonate spray, dilute milk solution (1:9), or cold-pressed neem oil (0.5%).",
+    "treatment_chemical": "Myclobutanil or Triadimefon fungicide spray.",
+    "prevention": "Prune interior canopy for cross ventilation; locate plants in full morning sun."
+  },
+  {
+    "id": "dis_downy_mildew",
+    "name": "Downy Mildew",
+    "scientific_name": "Pseudoperonospora cubensis",
+    "type": "oomycete",
+    "crops_affected": [
+      "cucumber",
+      "grape",
+      "lettuce",
+      "spinach",
+      "basil"
+    ],
+    "symptoms": [
+      "Angular yellow patches bordered by leaf veins",
+      "Purplish-gray downy mold on leaf underside",
+      "Crisp brown leaf collapse"
+    ],
+    "causes": [
+      "High humidity (>85%) and leaf surface moisture",
+      "Cool to warm wet weather"
+    ],
+    "treatment_organic": "Copper hydroxide spray, biofungicides containing Streptomyces.",
+    "treatment_chemical": "Phosphorous acid, Fluopicolide, or Mefenoxam.",
+    "prevention": "Irrigate at soil line only; select resistant hybrids; improve air movement."
+  },
+  {
+    "id": "dis_leaf_rust",
+    "name": "Leaf Rust",
+    "scientific_name": "Puccinia spp.",
+    "type": "fungal",
+    "crops_affected": [
+      "wheat",
+      "rose",
+      "coffee",
+      "bean",
+      "fig"
+    ],
+    "symptoms": [
+      "Raised reddish-orange or rust-brown pustules on leaf underside",
+      "Chlorosis on upper surface",
+      "Premature drop"
+    ],
+    "causes": [
+      "Extended free moisture on leaves (6-8 hours)",
+      "Moderate temperatures",
+      "Airborne urediniospores"
+    ],
+    "treatment_organic": "Sulfur dusting or bio-fungicide sprays. Rake and burn fallen rusted leaves.",
+    "treatment_chemical": "Propiconazole, Tebuconazole, or Mancozeb.",
+    "prevention": "Use rust-resistant seeds; avoid high-nitrogen fertilizers that create lush susceptible growth."
+  },
+  {
+    "id": "dis_bacterial_leaf_spot",
+    "name": "Bacterial Leaf Spot",
+    "scientific_name": "Xanthomonas campestris",
+    "type": "bacterial",
+    "crops_affected": [
+      "chili",
+      "bell pepper",
+      "tomato",
+      "mango"
+    ],
+    "symptoms": [
+      "Small water-soaked dark spots with translucent yellow margins",
+      "Cracked centers in spots",
+      "Leaf defoliation"
+    ],
+    "causes": [
+      "Rain splash, contaminated seeds, working with wet foliage",
+      "Warm rainy seasons"
+    ],
+    "treatment_organic": "Fixed copper mixed with Mancozeb (protectant). Destroy heavily infected plants.",
+    "treatment_chemical": "Streptomycin sulfate (where permitted) or copper sulfate bactericide.",
+    "prevention": "Hot water seed treatment; strict drip irrigation; sanitize pruning tools with 70% alcohol."
+  },
+  {
+    "id": "dis_spider_mites",
+    "name": "Two-Spotted Spider Mites",
+    "scientific_name": "Tetranychus urticae",
+    "type": "pest",
+    "crops_affected": [
+      "monstera",
+      "rose",
+      "tomato",
+      "marigold",
+      "croton",
+      "eggplant"
+    ],
+    "symptoms": [
+      "Fine yellow or white stippling on leaf surface",
+      "Delicate silken webbing in leaf axils",
+      "Bronzed, dry leaves"
+    ],
+    "causes": [
+      "Hot, dry, dusty environments",
+      "Low ambient humidity (<40%)",
+      "Lack of natural predatory mites"
+    ],
+    "treatment_organic": "Spray underside of leaves with cold-pressed neem oil, insecticidal soap, or introduce Phytoseiulus persimilis predators.",
+    "treatment_chemical": "Abamectin, Bifenazate, or Spiromesifen miticide.",
+    "prevention": "Increase ambient humidity; wipe foliage regularly with damp cloth; avoid dusty conditions."
+  },
+  {
+    "id": "dis_mealybugs",
+    "name": "Mealybugs",
+    "scientific_name": "Pseudococcidae family",
+    "type": "pest",
+    "crops_affected": [
+      "hibiscus",
+      "money plant",
+      "croton",
+      "citrus",
+      "succulents",
+      "mango"
+    ],
+    "symptoms": [
+      "White cottony clusters in leaf nodes and leaf undersides",
+      "Sticky honeydew with black sooty mold",
+      "Yellowing curled leaves"
+    ],
+    "causes": [
+      "Ants farming mealybugs, warm sheltered microclimates",
+      "Introducing uninspected nursery plants"
+    ],
+    "treatment_organic": "Dab directly with cotton swab dipped in 70% isopropyl alcohol; spray with neem oil + dish soap mix.",
+    "treatment_chemical": "Imidacloprid (systemic drench) or Acetamiprid foliar spray.",
+    "prevention": "Quarantine new arrivals for 14 days; control ant populations; wash foliage periodically."
+  },
+  {
+    "id": "dis_root_rot",
+    "name": "Root Rot & Damping Off",
+    "scientific_name": "Pythium / Rhizoctonia / Fusarium spp.",
+    "type": "fungal",
+    "crops_affected": [
+      "houseplants",
+      "snake plant",
+      "peace lily",
+      "tulsi",
+      "seedlings"
+    ],
+    "symptoms": [
+      "Black, mushy, foul-smelling roots",
+      "Sudden leaf wilting despite wet soil",
+      "Yellowing base stems"
+    ],
+    "causes": [
+      "Waterlogged soil with poor drainage",
+      "Overwatering without pot drainage holes",
+      "Contaminated potting mix"
+    ],
+    "treatment_organic": "Unpot immediately; trim black rotting roots; treat remaining root ball with 3% hydrogen peroxide; repot in fresh airy perlite mix.",
+    "treatment_chemical": "Metalaxyl or Fosetyl-Al drench.",
+    "prevention": "Use pots with drainage holes; allow top 2 inches of soil to dry between waterings; use coarse perlite."
+  },
+  {
+    "id": "dis_aphids",
+    "name": "Aphids (Greenfly / Blackfly)",
+    "scientific_name": "Aphidoidea family",
+    "type": "pest",
+    "crops_affected": [
+      "rose",
+      "chili",
+      "hibiscus",
+      "mustard",
+      "beans"
+    ],
+    "symptoms": [
+      "Clusters of tiny green/black pear-shaped insects on tender tips",
+      "Curled distorted young leaves",
+      "Honeydew & sooty mold"
+    ],
+    "causes": [
+      "Excess nitrogen fertilizer producing soft succulent shoots",
+      "Absence of ladybugs or lacewings"
+    ],
+    "treatment_organic": "Blast with high-pressure water spray; apply insecticidal soap or neem oil spray; release ladybird beetles.",
+    "treatment_chemical": "Acetamiprid or Thiamethoxam systemic spray.",
+    "prevention": "Avoid excess synthetic nitrogen; intercrop with marigolds and dill to attract beneficial predators."
+  },
+  {
+    "id": "dis_anthracnose",
+    "name": "Anthracnose Leaf & Fruit Spot",
+    "scientific_name": "Colletotrichum gloeosporioides",
+    "type": "fungal",
+    "crops_affected": [
+      "mango",
+      "banana",
+      "coffee",
+      "papaya",
+      "anthurium",
+      "avocado"
+    ],
+    "symptoms": [
+      "Sunken dark circular spots on leaves and fruit",
+      "Pink gelatinous spore masses in wet conditions",
+      "Blossom blight"
+    ],
+    "causes": [
+      "Warm wet tropical seasons",
+      "Rain splashing spores onto young tender foliage"
+    ],
+    "treatment_organic": "Bordeaux mixture (copper sulfate + lime) or copper oxychloride spray.",
+    "treatment_chemical": "Azoxystrobin, Carbendazim, or Difenoconazole spray.",
+    "prevention": "Prune dead wood before monsoon; spray protectant copper before flower opening; harvest dry."
+  },
+  {
+    "id": "dis_whitefly",
+    "name": "Silverleaf Whitefly",
+    "scientific_name": "Bemisia tabaci",
+    "type": "pest",
+    "crops_affected": [
+      "tomato",
+      "chili",
+      "cotton",
+      "cassava",
+      "cucumber",
+      "poinsettia"
+    ],
+    "symptoms": [
+      "Clouds of tiny white moth-like flies fluttering when shaken",
+      "Leaf yellowing and silvering",
+      "Vector for leaf curl viruses"
+    ],
+    "causes": [
+      "Hot dry weather",
+      "Heavy monoculture cropping",
+      "Chemical pesticide resistance"
+    ],
+    "treatment_organic": "Hang yellow sticky cards; spray with neem oil + potassium soap; release parasitic wasps (Encarsia formosa).",
+    "treatment_chemical": "Spirotetramat or Pyriproxyfen insect growth regulators.",
+    "prevention": "Cover seedbeds with 50-mesh insect netting; remove field weeds hosting vectors."
+  },
+  {
+    "id": "dis_leaf_curl_virus",
+    "name": "Tomato / Chili Leaf Curl Virus",
+    "scientific_name": "Begomovirus (transmitted by Whitefly)",
+    "type": "viral",
+    "crops_affected": [
+      "tomato",
+      "chili",
+      "papaya"
+    ],
+    "symptoms": [
+      "Severe upward and inward leaf curling",
+      "Stunted bushy plant architecture",
+      "Thickened leathery puckered leaves"
+    ],
+    "causes": [
+      "Transmission by Bemisia tabaci whiteflies",
+      "Overlapping crop cycles"
+    ],
+    "treatment_organic": "No cure for viral infections once entered. Uproot and burn infected plants to safeguard neighbors.",
+    "treatment_chemical": "Control insect vector with systemic insecticides (Thiamethoxam, Imidacloprid).",
+    "prevention": "Use virus-tolerant hybrid varieties; install fine insect exclusion nets; yellow sticky traps."
+  },
+  {
+    "id": "dis_scale_insects",
+    "name": "Scale Insects (Armored & Soft)",
+    "scientific_name": "Coccoidea superfamily",
+    "type": "pest",
+    "crops_affected": [
+      "citrus",
+      "ficus",
+      "croton",
+      "olive",
+      "fern",
+      "orchids"
+    ],
+    "symptoms": [
+      "Immobile waxy, brown, or shell-like bumps on stems and leaf veins",
+      "Yellow chlorotic spots beneath shells",
+      "Stem dieback"
+    ],
+    "causes": [
+      "Indoor dry environments lacking predators",
+      "Infested nursery stock"
+    ],
+    "treatment_organic": "Scrape off with soft toothbrush; apply horticultural mineral oil or neem oil to suffocate scales.",
+    "treatment_chemical": "Dinotefuran or Acetamiprid systemic drench.",
+    "prevention": "Inspect leaf axils regularly; maintain adequate air circulation and humidity."
+  },
+  {
+    "id": "dis_iron_chlorosis",
+    "name": "Iron Deficiency (Chlorosis)",
+    "scientific_name": "Physiological Abiotic Disorder",
+    "type": "deficiency",
+    "crops_affected": [
+      "jasmine",
+      "gardenia",
+      "hibiscus",
+      "citrus",
+      "rose"
+    ],
+    "symptoms": [
+      "Interveinal chlorosis: leaf tissue turns pale yellow while leaf veins stay distinctly dark green",
+      "Affects newest upper leaves first"
+    ],
+    "causes": [
+      "High alkaline soil (pH > 7.5) binding iron",
+      "Poorly aerated compacted waterlogged soil",
+      "Excess phosphorus"
+    ],
+    "treatment_organic": "Apply chelated iron (Fe-EDDHA for alkaline soils) as root drench or foliar spray. Work in sulfur and organic compost.",
+    "treatment_chemical": "Ferrous sulfate or chelated iron fertilizers.",
+    "prevention": "Maintain soil pH between 6.0 and 6.8; ensure adequate root drainage."
+  },
+  {
+    "id": "dis_blossom_end_rot",
+    "name": "Blossom End Rot",
+    "scientific_name": "Physiological Calcium Disorder",
+    "type": "deficiency",
+    "crops_affected": [
+      "tomato",
+      "bell pepper",
+      "eggplant",
+      "zucchini"
+    ],
+    "symptoms": [
+      "Dark, sunken, water-soaked leathery black spot on the bottom (blossom end) of fruit"
+    ],
+    "causes": [
+      "Inconsistent watering disrupting calcium uptake during fruit enlargement",
+      "Extreme dry-to-wet soil swings"
+    ],
+    "treatment_organic": "Ensure consistent even soil moisture; top-dress with dolomitic lime or gypsum; apply foliar calcium chloride.",
+    "treatment_chemical": "Foliar calcium nitrate spray during early fruit set.",
+    "prevention": "Mulch heavily to stabilize soil moisture; do not let root zone dry out completely between waterings."
+  },
+  {
+    "id": "dis_thrips",
+    "name": "Thrips (Chili & Flower Thrips)",
+    "scientific_name": "Scirtothrips dorsalis / Frankliniella",
+    "type": "pest",
+    "crops_affected": [
+      "chili",
+      "rose",
+      "onion",
+      "cotton",
+      "marigold",
+      "gladiolus"
+    ],
+    "symptoms": [
+      "Silvery or bronzed patches on leaves with tiny black fecal specks",
+      "Upward boat-shaped leaf curling",
+      "Brown distorted flower petals"
+    ],
+    "causes": [
+      "Hot, dry, windy weather",
+      "Nearby weed reservoirs"
+    ],
+    "treatment_organic": "Blue sticky traps; spinosad bio-insecticide spray; predatory mites (Amblyseius swirskii).",
+    "treatment_chemical": "Fipronil, Spinetoram, or Imidacloprid.",
+    "prevention": "Avoid monoculture; install barrier crops like maize; keep fields weed-free."
+  },
+  {
+    "id": "dis_sooty_mold",
+    "name": "Sooty Mold",
+    "scientific_name": "Capnodium spp.",
+    "type": "fungal_secondary",
+    "crops_affected": [
+      "mango",
+      "citrus",
+      "hibiscus",
+      "guava",
+      "gardenia"
+    ],
+    "symptoms": [
+      "Black powdery soot-like film coating leaf surfaces and stems",
+      "Can be wiped off with fingers",
+      "Reduced photosynthesis"
+    ],
+    "causes": [
+      "Sap-sucking insects (aphids, mealybugs, scale, whiteflies) secreting sugary honeydew"
+    ],
+    "treatment_organic": "Wash leaves with mild soapy water; eliminate the underlying sap-sucking pest using neem oil.",
+    "treatment_chemical": "Insecticides targeting the honeydew-secreting pests.",
+    "prevention": "Control aphids and mealybugs promptly; maintain ant-free tree trunks."
+  },
+  {
+    "id": "dis_caterpillar_borer",
+    "name": "Stem Borer & Leaf Eating Caterpillar",
+    "scientific_name": "Spodoptera / Chilo / Helicoverpa spp.",
+    "type": "pest",
+    "crops_affected": [
+      "rice",
+      "maize",
+      "tomato",
+      "chili",
+      "cabbage"
+    ],
+    "symptoms": [
+      "Irregular ragged holes in foliage",
+      "Bored holes in fruits or stems with brown frass (caterpillar droppings)"
+    ],
+    "causes": [
+      "Nocturnal moth egg-laying on leaf underside",
+      "Warm humid weather"
+    ],
+    "treatment_organic": "Bacillus thuringiensis (Bt) kurstaki spray, pheromone traps, handpicking caterpillars in early morning.",
+    "treatment_chemical": "Chlorantraniliprole, Emamectin benzoate, or Flubendiamide.",
+    "prevention": "Monitor with pheromone traps; intercrop with trap crops; encourage bird perches."
+  },
+  {
+    "id": "dis_fusarium_wilt",
+    "name": "Fusarium Wilt (Panama Disease)",
+    "scientific_name": "Fusarium oxysporum",
+    "type": "fungal_vascular",
+    "crops_affected": [
+      "banana",
+      "tomato",
+      "cotton",
+      "chickpea",
+      "carnation"
+    ],
+    "symptoms": [
+      "Yellowing of lower leaves spreading upward",
+      "Unilateral (one-sided) leaf wilting",
+      "Internal vascular ring browning"
+    ],
+    "causes": [
+      "Soil-inhabiting fungus entering through root wounds",
+      "Warm soil temperatures (28°C+)"
+    ],
+    "treatment_organic": "Soil solarization; application of Trichoderma viride bio-fungicide in organic compost.",
+    "treatment_chemical": "Carbendazim drench (limited efficacy once vascular system is blocked).",
+    "prevention": "Plant certified disease-free tissue culture plantlets; rotate crops with non-hosts; maintain balanced soil potassium."
+  },
+  {
+    "id": "dis_mosaic_virus",
+    "name": "Tobacco / Cucumber Mosaic Virus (CMV)",
+    "scientific_name": "Mosaic Virus group",
+    "type": "viral",
+    "crops_affected": [
+      "tomato",
+      "cucumber",
+      "tobacco",
+      "pepper",
+      "marigold"
+    ],
+    "symptoms": [
+      "Mottled light and dark green mosaic patterns on leaves",
+      "Shoestring narrow leaf deformation",
+      "Bumpy, distorted fruits"
+    ],
+    "causes": [
+      "Transmitted mechanically by tools, hands, tobacco smokers, and aphids"
+    ],
+    "treatment_organic": "No cure. Remove and burn infected plants immediately. Do not compost.",
+    "treatment_chemical": "None. Disinfect hands and tools with 20% non-fat dry milk solution.",
+    "prevention": "Wash hands with soap before touching plants; control aphid vectors; weed control."
+  },
+  {
+    "id": "dis_citrus_canker",
+    "name": "Citrus Canker",
+    "scientific_name": "Xanthomonas citri",
+    "type": "bacterial",
+    "crops_affected": [
+      "lemon",
+      "lime",
+      "orange",
+      "grapefruit"
+    ],
+    "symptoms": [
+      "Raised corky, scab-like circular lesions with yellow oily halos on leaves, twigs, and fruit",
+      "Premature fruit drop"
+    ],
+    "causes": [
+      "Wind-driven rain, contaminated pruning tools, leaf miner damage creating entry wounds"
+    ],
+    "treatment_organic": "Prune infected twigs in dry weather; spray preventive copper oxychloride or copper hydroxide.",
+    "treatment_chemical": "Streptomycin + Copper sulfate sprays during shoot flush.",
+    "prevention": "Plant windbreaks; manage citrus leaf miners; sanitize pruning equipment."
+  },
+  {
+    "id": "dis_fungus_gnats",
+    "name": "Fungus Gnats",
+    "scientific_name": "Bradysia spp.",
+    "type": "pest",
+    "crops_affected": [
+      "houseplants",
+      "indoor potted plants",
+      "seedlings"
+    ],
+    "symptoms": [
+      "Tiny black mosquito-like flies hovering above soil",
+      "Larvae chewing root hairs causing dull growth and wilting"
+    ],
+    "causes": [
+      "Continuously soggy, wet potting soil rich in decomposing organic matter"
+    ],
+    "treatment_organic": "Allow top 2 inches of soil to completely dry out; drench with Bacillus thuringiensis israelensis (BTI Mosquito Bits); yellow sticky cards.",
+    "treatment_chemical": "Pyrethrin or Imidacloprid soil drench.",
+    "prevention": "Top-dress potting soil with 0.5 inch of coarse horticultural sand; never allow pots to sit in drainage water."
+  },
+  {
+    "id": "dis_leaf_spot_cercospora",
+    "name": "Cercospora Leaf Spot",
+    "scientific_name": "Cercospora spp.",
+    "type": "fungal",
+    "crops_affected": [
+      "rose",
+      "coffee",
+      "beetroot",
+      "groundnut",
+      "spinach"
+    ],
+    "symptoms": [
+      "Small circular spots with grayish-white centers and dark reddish-purple borders",
+      "Shot-hole appearance when center drops"
+    ],
+    "causes": [
+      "High humidity, frequent overhead irrigation, dense canopies"
+    ],
+    "treatment_organic": "Neem oil spray, copper fungicide, bio-control with Trichoderma.",
+    "treatment_chemical": "Thiophanate-methyl, Difenoconazole, or Azoxystrobin.",
+    "prevention": "Avoid overhead watering; remove fallen leaf litter; ensure proper spacing."
+  },
+  {
+    "id": "dis_bacterial_wilt",
+    "name": "Bacterial Wilt",
+    "scientific_name": "Ralstonia solanacearum",
+    "type": "bacterial",
+    "crops_affected": [
+      "potato",
+      "tomato",
+      "eggplant",
+      "banana",
+      "ginger"
+    ],
+    "symptoms": [
+      "Rapid daytime wilting while foliage remains green",
+      "Milky white bacterial streaming from stem cut in water",
+      "Vascular browning"
+    ],
+    "causes": [
+      "Soil bacterium surviving for years; enters root injuries; favored by warm temperatures (30°C+)"
+    ],
+    "treatment_organic": "No curative chemical; remove infected plants; apply Pseudomonas fluorescens bio-agent.",
+    "treatment_chemical": "Soil fumigation (commercial only).",
+    "prevention": "Use clean certified seeds/tubers; practice crop rotation with corn/grasses; raise soil pH slightly."
+  },
+  {
+    "id": "dis_leaf_miner",
+    "name": "Citrus / Vegetable Leaf Miner",
+    "scientific_name": "Liriomyza / Phyllocnistis spp.",
+    "type": "pest",
+    "crops_affected": [
+      "citrus",
+      "tomato",
+      "pea",
+      "spinach",
+      "chili"
+    ],
+    "symptoms": [
+      "Winding serpentine silvery trails or tunnels inside leaf tissue",
+      "Curled, distorted leaves"
+    ],
+    "causes": [
+      "Tiny adult flies laying eggs inside leaf tissue; larvae tunneling within leaf parenchyma"
+    ],
+    "treatment_organic": "Apply cold-pressed neem oil (penetrates leaf tissue); hang yellow sticky cards; crush visible larvae inside leaf.",
+    "treatment_chemical": "Spinosad or Abamectin foliar spray.",
+    "prevention": "Inspect young shoots; encourage eulophid parasitic wasps; use floating row covers."
+  },
+  {
+    "id": "dis_gray_mold_botrytis",
+    "name": "Gray Mold (Botrytis Blight)",
+    "scientific_name": "Botrytis cinerea",
+    "type": "fungal",
+    "crops_affected": [
+      "strawberry",
+      "rose",
+      "grape",
+      "tomato",
+      "geranium"
+    ],
+    "symptoms": [
+      "Water-soaked soft lesions covered in fuzzy gray-brown velvety mold",
+      "Rotting flowers and fruits"
+    ],
+    "causes": [
+      "Cool humid conditions (15-20°C)",
+      "Poor air circulation and dead floral tissues left on plant"
+    ],
+    "treatment_organic": "Remove and discard all moldy blossoms and fruit; spray with Bacillus subtilis or potassium bicarbonate.",
+    "treatment_chemical": "Fenhexamid, Iprodione, or Boscalid fungicide.",
+    "prevention": "Deadhead spent flowers regularly; vent greenhouse humidity; space plants."
+  },
+  {
+    "id": "dis_root_knot_nematode",
+    "name": "Root-Knot Nematode",
+    "scientific_name": "Meloidogyne spp.",
+    "type": "nematode",
+    "crops_affected": [
+      "tomato",
+      "okra",
+      "eggplant",
+      "banana",
+      "carrot",
+      "chili"
+    ],
+    "symptoms": [
+      "Swollen knot-like galls on roots",
+      "Stunted yellowing plants that wilt in heat",
+      "Severely reduced yield"
+    ],
+    "causes": [
+      "Microscopic roundworms feeding inside root vascular cells; sandy warm soils"
+    ],
+    "treatment_organic": "Incorporate neem cake into soil; intercrop with French marigolds (Tagetes patula); apply Paecilomyces lilacinus bio-agent.",
+    "treatment_chemical": "Fluopyram nematicide drench.",
+    "prevention": "Practice strict crop rotation; solarize soil under clear plastic for 6 weeks during peak summer."
+  },
+  {
+    "id": "dis_edema",
+    "name": "Oedema (Water Retention Stress)",
+    "scientific_name": "Physiological Cellular Rupture",
+    "type": "abiotic",
+    "crops_affected": [
+      "monstera",
+      "ficus",
+      "jade plant",
+      "peperomia",
+      "hibiscus"
+    ],
+    "symptoms": [
+      "Small corky blister-like pimples or bumps under leaves",
+      "Curling leaves",
+      "Occasional leaf drop"
+    ],
+    "causes": [
+      "Roots absorbing water faster than leaves can transpire during warm wet soil + cool humid air"
+    ],
+    "treatment_organic": "Reduce watering frequency; increase airflow with an oscillating fan; ensure bright indirect light.",
+    "treatment_chemical": "None needed - non-infectious physiological condition.",
+    "prevention": "Do not water during overcast humid days; use well-aerated chunky aroid potting soil."
+  },
+  {
+    "id": "dis_sun_scald",
+    "name": "Sun Scald & Light Burn",
+    "scientific_name": "Abiotic Photodamage",
+    "type": "abiotic",
+    "crops_affected": [
+      "peace lily",
+      "calathea",
+      "fern",
+      "tomato",
+      "bell pepper"
+    ],
+    "symptoms": [
+      "Bleached white, crispy papery patches on foliage or fruit surfaces directly facing strong sun"
+    ],
+    "causes": [
+      "Sudden exposure to harsh midday direct UV rays without gradual acclimatization"
+    ],
+    "treatment_organic": "Move plant to filtered bright indirect light; prune crisp bleached leaves.",
+    "treatment_chemical": "None needed.",
+    "prevention": "Acclimatize plants gradually over 10-14 days when moving outdoors; maintain canopy foliage to shade fruit."
+  },
+  {
+    "id": "dis_nitrogen_deficiency",
+    "name": "Nitrogen Deficiency",
+    "scientific_name": "Nutritional Mineral Deficiency",
+    "type": "deficiency",
+    "crops_affected": [
+      "all crops",
+      "rice",
+      "wheat",
+      "maize",
+      "houseplants"
+    ],
+    "symptoms": [
+      "Uniform pale yellowing (chlorosis) starting on oldest lower leaves while upper leaves remain light green",
+      "Slow stunted growth"
+    ],
+    "causes": [
+      "Depleted potting soil, leaching from heavy rain, insufficient nitrogen fertilizer"
+    ],
+    "treatment_organic": "Top-dress with well-rotted vermicompost, fish emulsion, or neem seed meal.",
+    "treatment_chemical": "Urea (46-0-0) or balanced NPK 20-20-20 soluble fertilizer.",
+    "prevention": "Incorporate organic matter before planting; follow regular feeding schedule during active spring-summer growth."
+  },
+  {
+    "id": "dis_potassium_deficiency",
+    "name": "Potassium Deficiency",
+    "scientific_name": "Nutritional Mineral Deficiency",
+    "type": "deficiency",
+    "crops_affected": [
+      "banana",
+      "tomato",
+      "potato",
+      "coconut",
+      "rose"
+    ],
+    "symptoms": [
+      "Marginal leaf scorch: outer edges of older leaves turn brown, crispy, and burnt-looking",
+      "Weak floppy stems"
+    ],
+    "causes": [
+      "Low potassium in soil, sandy soils with high leaching, high calcium/magnesium ratio"
+    ],
+    "treatment_organic": "Apply wood ash (lightly), kelp meal, or potassium sulfate.",
+    "treatment_chemical": "Muriate of potash (MOP) or Sulfate of potash (SOP).",
+    "prevention": "Soil testing; maintain balanced potassium reserves especially during fruit formation."
+  },
+  {
+    "id": "dis_magnesium_deficiency",
+    "name": "Magnesium Deficiency",
+    "scientific_name": "Nutritional Mineral Deficiency",
+    "type": "deficiency",
+    "crops_affected": [
+      "tomato",
+      "citrus",
+      "rose",
+      "chili",
+      "oil palm"
+    ],
+    "symptoms": [
+      "Strong inverted V-shaped yellowing between green veins on older leaves",
+      "Reddish or purple tints on margins in brassicas"
+    ],
+    "causes": [
+      "Acidic sandy soils, excess potassium fertilizer inhibiting magnesium uptake"
+    ],
+    "treatment_organic": "Dissolve 1 tablespoon Epsom salt (magnesium sulfate) in 1 gallon water and spray foliage or drench soil.",
+    "treatment_chemical": "Magnesium sulfate fertilizer.",
+    "prevention": "Apply dolomitic agricultural limestone in acidic soils."
+  },
+  {
+    "id": "dis_bacterial_canker",
+    "name": "Bacterial Canker of Tomato",
+    "scientific_name": "Clavibacter michiganensis",
+    "type": "bacterial",
+    "crops_affected": [
+      "tomato",
+      "pepper"
+    ],
+    "symptoms": [
+      "One-sided leaf wilt, white blister spots with dark centers (birds-eye spots) on fruit",
+      "Tan vascular discoloration"
+    ],
+    "causes": [
+      "Contaminated seeds, entry via pruning wounds and trichome hairs"
+    ],
+    "treatment_organic": "Destroy infected plants; apply preventive copper hydroxide sprays.",
+    "treatment_chemical": "Bactericides (limited effectiveness once systemic).",
+    "prevention": "Use certified pathogen-free seeds; sanitize pruning clippers between plants."
+  },
+  {
+    "id": "dis_black_spot_rose",
+    "name": "Black Spot of Rose",
+    "scientific_name": "Diplocarpon rosae",
+    "type": "fungal",
+    "crops_affected": [
+      "rose"
+    ],
+    "symptoms": [
+      "Circular black spots with feathery fringed margins on upper leaf surfaces",
+      "Surrounding tissue turns yellow and drops"
+    ],
+    "causes": [
+      "Wet foliage for 7+ hours, warm humid weather (24°C)"
+    ],
+    "treatment_organic": "Neem oil or sulfur spray applied every 7-10 days; remove and destroy diseased leaves.",
+    "treatment_chemical": "Trifloxystrobin, Tebuconazole, or Chlorothalonil.",
+    "prevention": "Always water at ground level; plant in full sun with 6+ hours direct exposure."
+  },
+  {
+    "id": "dis_dieback_chili",
+    "name": "Dieback & Fruit Rot of Chili",
+    "scientific_name": "Colletotrichum capsici",
+    "type": "fungal",
+    "crops_affected": [
+      "chili",
+      "capsicum"
+    ],
+    "symptoms": [
+      "Twigs dry up from tip downwards (dieback)",
+      "Circular sunken black spots on ripe chili fruits with pink spores"
+    ],
+    "causes": [
+      "Prolonged monsoon showers, humid stagnant air"
+    ],
+    "treatment_organic": "Prune dried twigs 2 inches below infected area; spray Bordeaux mixture (1%) or neem cake drench.",
+    "treatment_chemical": "Azoxystrobin or Mancozeb + Carbendazim foliar spray.",
+    "prevention": "Seed treatment with Trichoderma viride; maintain good field drainage."
+  },
+  {
+    "id": "dis_clubroot",
+    "name": "Clubroot of Crucifers",
+    "scientific_name": "Plasmodiophora brassicae",
+    "type": "protist",
+    "crops_affected": [
+      "cabbage",
+      "cauliflower",
+      "broccoli",
+      "mustard",
+      "radish"
+    ],
+    "symptoms": [
+      "Roots swell into club-shaped deformed galls",
+      "Plants wilt during warm midday hours but recover overnight",
+      "Stunting"
+    ],
+    "causes": [
+      "Acidic soil (pH < 7.0), cool wet soils, soil-borne resting spores surviving 15+ years"
+    ],
+    "treatment_organic": "Raise soil pH above 7.2 using hydrated agricultural lime; improve soil drainage.",
+    "treatment_chemical": "Fluazinam soil treatment.",
+    "prevention": "7-year crop rotation without brassica family; clean tractor tires and garden shoes."
+  },
+  {
+    "id": "dis_damping_off",
+    "name": "Damping-off of Seedlings",
+    "scientific_name": "Pythium / Rhizoctonia solani",
+    "type": "fungal",
+    "crops_affected": [
+      "seedlings",
+      "tomato",
+      "chili",
+      "eggplant",
+      "lettuce",
+      "flowers"
+    ],
+    "symptoms": [
+      "Stem at soil line becomes water-soaked, pinches thin, and seedling topples over dead"
+    ],
+    "causes": [
+      "Cold wet seedbeds, poor air movement, over-dense seedling sowing, unsterilized soil"
+    ],
+    "treatment_organic": "Dust seeds with Trichoderma; sprinkle ground cinnamon on soil surface (natural antifungal); thin seedlings.",
+    "treatment_chemical": "Metalaxyl or Captan seed dressing.",
+    "prevention": "Use sterile seed starting mix; bottom-water seedlings; ensure fan air circulation."
+  },
+  {
+    "id": "dis_leaf_curl_peach",
+    "name": "Peach Leaf Curl",
+    "scientific_name": "Taphrina deformans",
+    "type": "fungal",
+    "crops_affected": [
+      "peach",
+      "nectarine",
+      "almond"
+    ],
+    "symptoms": [
+      "Young leaves become severely distorted, puckered, thickened, and turn reddish-pink before dropping"
+    ],
+    "causes": [
+      "Cool wet weather during bud break in early spring"
+    ],
+    "treatment_organic": "Spray copper fungicide or lime-sulfur once in late autumn after leaf drop and once before spring bud swell.",
+    "treatment_chemical": "Chlorothalonil applied during dormant season.",
+    "prevention": "Once leaves are curled in summer, spraying is ineffective; pick off affected leaves and treat next winter."
+  },
+  {
+    "id": "dis_stem_rot_sclerotium",
+    "name": "Southern Blight (Sclerotium Stem Rot)",
+    "scientific_name": "Athelia rolfsii (Sclerotium rolfsii)",
+    "type": "fungal",
+    "crops_affected": [
+      "tomato",
+      "pepper",
+      "groundnut",
+      "potato",
+      "apple",
+      "marigold"
+    ],
+    "symptoms": [
+      "White fan-like mycelial threads at soil level around stem",
+      "Mustard-seed-like brown resting bodies (sclerotia)",
+      "Sudden complete wilt"
+    ],
+    "causes": [
+      "Hot moist soil conditions (30-35°C), high organic matter near stem base"
+    ],
+    "treatment_organic": "Remove infected plant with surrounding root ball and 6 inches of soil; incorporate Trichoderma harzianum.",
+    "treatment_chemical": "Flutolanil or Azoxystrobin soil drench.",
+    "prevention": "Deep plowing to bury surface crop residue; avoid piling moist mulch against plant stems."
+  }
+]

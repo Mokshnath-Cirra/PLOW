@@ -7,6 +7,7 @@ import 'screens/main_shell_screen.dart';
 import 'screens/add_edit_plant_screen.dart';
 import 'screens/scanner_screen.dart';
 import 'screens/diagnosis_report_screen.dart';
+import 'screens/plant_library_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +46,7 @@ class PlowApp extends StatelessWidget {
         '/add-plant': (context) => const AddEditPlantScreen(),
         '/scan': (context) => const ScannerScreen(),
         '/diagnosis': (context) => const DiagnosisReportScreen(),
+        '/library': (context) => const PlantLibraryScreen(),
       },
     );
   }

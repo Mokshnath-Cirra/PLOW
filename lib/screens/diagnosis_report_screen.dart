@@ -1,10 +1,97 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
+import '../models/diagnosis_report.dart';
+import '../providers/plant_provider.dart';
+import '../services/api_service.dart';
+import '../utils/responsive.dart';
 
-class DiagnosisReportScreen extends StatelessWidget {
-  final String specimenKey;
+class DiagnosisReportScreen extends StatefulWidget {
+  final DiagnosisReport? report;
+  final String? specimenKey;
 
-  const DiagnosisReportScreen({super.key, this.specimenKey = 'early_blight'});
+  const DiagnosisReportScreen({
+    super.key,
+    this.report,
+    this.specimenKey,
+  });
+
+  @override
+  State<DiagnosisReportScreen> createState() => _DiagnosisReportScreenState();
+}
+
+class _DiagnosisReportScreenState extends State<DiagnosisReportScreen> {
+  late DiagnosisReport _report;
+  final TextEditingController _chatController = TextEditingController();
+  final List<Map<String, String>> _chatMessages = [];
+  bool _isChatLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.report != null) {
+      _report = widget.report!;
+    } else {
+      // Fallback default sample
+      _report = const DiagnosisReport(
+        isPlant: true,
+        commonName: 'Tomato',
+        scientificName: 'Solanum lycopersicum',
+        family: 'Solanaceae',
+        plantType: 'crop',
+        confidence: 94.2,
+        healthStatus: 'diseased',
+        diseaseName: 'Early Blight',
+        diseaseConfidence: 92.0,
+        symptomsSeen: ['Concentric dark brown bullseye lesions', 'Yellow chlorotic halos around lesions'],
+        severity: 64,
+        likelyCauses: [
+          'High ambient humidity and leaf surface wetness exceeding 4 hours',
+          'Soil-borne fungal spores splashing onto foliage',
+        ],
+        treatmentSteps: [
+          'Prune and discard infected lower foliage using sanitized shears',
+          'Apply organic copper octanoate or Bacillus subtilis spray every 7 days',
+          'Transition from overhead watering to basal soil drip irrigation',
+        ],
+        preventionTips: [
+          'Water only at root level early in the morning',
+          'Space plants 24 inches apart for maximum airflow',
+          'Apply 2 inches of organic straw mulch',
+        ],
+        timestamp: 'Just now',
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _chatController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendChatMessage() async {
+    final query = _chatController.text.trim();
+    if (query.isEmpty) return;
+
+    setState(() {
+      _chatMessages.add({'role': 'user', 'text': query});
+      _chatController.clear();
+      _isChatLoading = true;
+    });
+
+    final reply = await PlantApiService().askAgronomist(
+      question: query,
+      contextReport: _report,
+    );
+
+    if (mounted) {
+      setState(() {
+        _chatMessages.add({'role': 'assistant', 'text': reply});
+        _isChatLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,526 +105,477 @@ class DiagnosisReportScreen extends StatelessWidget {
             color: Colors.black,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.circle, size: 8, color: AppColors.primaryLight),
-              SizedBox(width: 6),
+              Icon(
+                Icons.circle,
+                size: 8,
+                color: _report.isLowConfidence ? AppColors.warning : AppColors.primaryLight,
+              ),
+              const SizedBox(width: 6),
               Text(
-                'VERIFIED 94.2% AI CONFIDENCE',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                ),
+                'AI CONFIDENCE ${_report.confidence.toInt()}%',
+                style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
               ),
             ],
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bookmark_outline),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.share_outlined),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
       ),
-      body: SingleChildScrollView(
+      body: ResponsiveContainer(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Breadcrumbs
-                const Text(
-                  'Organic Tomato • Greenhouse B (Plot 4B) • #AB-8942',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.lightTextSecondary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Pathological ID Hero Card
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: Container(
-                    color: AppColors.darkSurface,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Leaf Image with bounding box
-                        Stack(
-                          children: [
-                            Container(
-                              height: 220,
-                              width: double.infinity,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    'https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&auto=format&fit=crop',
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 14,
-                              left: 14,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppColors.urgent,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Text(
-                                  'STAGE 2: MODERATE SEVERITY',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Target Box
-                            Positioned(
-                              top: 50,
-                              left: 80,
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: AppColors.primaryLight, width: 2),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Target: 96%',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.bold,
-                                        backgroundColor: Colors.black54,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // Disease Details Content
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'PATHOLOGICAL ID • Solanaceae Family',
-                                style: TextStyle(
-                                  color: AppColors.primaryLight,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Early Blight',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              const Text(
-                                'Alternaria solani [Sorauer]',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-
-                              // Metadata Grid
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _buildMetaCol(
-                                      'Classification', 'Ascomycete Fungal'),
-                                  _buildMetaCol('Timestamp', 'Today 09:14 Live'),
-                                  _buildMetaCol(
-                                      'Microclimate', '78% RH • 26.5°C'),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Severity Risk Matrix Card
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // NOT A PLANT ERROR BANNER
+              if (!_report.isPlant) ...[
                 Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color:
-                          isDark ? AppColors.darkBorder : AppColors.lightBorder,
-                    ),
+                    color: AppColors.urgent.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.urgent, width: 1.5),
                   ),
-                  child: Row(
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '● HIGH ALERT',
-                              style: TextStyle(
-                                color: AppColors.urgent,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            RichText(
-                              text: const TextSpan(
-                                text: '64',
-                                style: TextStyle(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.black87,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: ' / 100',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            const Text(
-                              'Accelerating tissue loss; containment priority high before defoliation spreads.',
-                              style: TextStyle(fontSize: 12, height: 1.4),
-                            ),
-                          ],
-                        ),
+                      const Icon(Icons.warning_amber_rounded, size: 48, color: AppColors.urgent),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Not a Plant',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppColors.urgent),
                       ),
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.urgent, width: 6),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'INDEX',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'The uploaded image does not appear to be a plant, leaf, tree, or crop (Identified as: ${_report.commonName}). Please upload a clear photo of living foliage.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 13, height: 1.4),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
+              ],
 
-                // Progression Wave (Timeline from Screenshot)
-                Container(
+              // 1. PRIMARY PLANT IDENTIFICATION CARD
+              Card(
+                child: Padding(
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color:
-                          isDark ? AppColors.darkBorder : AppColors.lightBorder,
-                    ),
-                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
-                            children: [
-                              Text('🌊', style: TextStyle(fontSize: 18)),
-                              SizedBox(width: 8),
-                              Text(
-                                'Progression Wave',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryLight.withOpacity(0.15),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        _report.plantType.toUpperCase(),
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primaryDark,
+                                        ),
+                                      ),
+                                    ),
+                                    if (_report.isCareVerified) ...[
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.shade100,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Text(
+                                          '✓ Verified Botanical Match',
+                                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.green),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _report.commonName,
+                                  style: const TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                if (_report.scientificName.isNotEmpty)
+                                  Text(
+                                    _report.scientificName,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.italic,
+                                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryLight.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
+                              color: _report.isHealthy ? Colors.green.shade50 : AppColors.urgent.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(16),
                             ),
-                            child: const Text(
-                              'Active Phase 2',
-                              style: TextStyle(
-                                color: AppColors.primaryDark,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            child: Text(
+                              _report.isHealthy ? '🌱' : '⚠️',
+                              style: const TextStyle(fontSize: 32),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
 
-                      _buildTimelineStep(
-                        'Day 1–3: Spore Germination',
-                        'Microscopic stomatal penetration during warm wet night cycle.',
-                        isResolved: true,
+                      // Low confidence warning & alternatives
+                      if (_report.isLowConfidence) ...[
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.warning.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.warning),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '⚠️ Not sure, here are the closest matches:',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 4),
+                              if (_report.alternatives.isNotEmpty)
+                                ..._report.alternatives.map((alt) => Text(
+                                      '• ${alt.name} (${alt.confidence.toInt()}% match)',
+                                      style: const TextStyle(fontSize: 11),
+                                    ))
+                              else
+                                const Text('• Take a clearer close-up photo of the leaf in natural daylight for higher confidence.', style: TextStyle(fontSize: 11)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                      ],
+
+                      // Add to Garden Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            if (_report.matchedSpecies != null) {
+                              context.read<PlantProvider>().addPlantFromSpecies(_report.matchedSpecies!);
+                            } else {
+                              context.read<PlantProvider>().addPlantFromSpecies(
+                                    PlantSpecies(
+                                      id: 'id_${DateTime.now().millisecondsSinceEpoch}',
+                                      commonName: _report.commonName,
+                                      localNames: {},
+                                      scientificName: _report.scientificName,
+                                      family: _report.family,
+                                      type: _report.plantType,
+                                      light: 'Bright indirect light',
+                                      waterFrequencyDays: 7,
+                                      waterNotes: 'Care data from AI, not verified',
+                                      soil: 'Well-draining potting mix',
+                                      temperatureRange: '18°C - 30°C',
+                                      humidity: '50% - 70%',
+                                      fertilizer: 'Balanced organic fertilizer',
+                                      toxicityPets: 'Unknown',
+                                      toxicityHumans: 'Unknown',
+                                      commonDiseases: [],
+                                      growthNotes: 'Added from AI diagnosis',
+                                      funFact: '',
+                                    ),
+                                  );
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('🌱 Added ${_report.commonName} to My Garden!'),
+                                backgroundColor: AppColors.primaryGreen,
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.add_task_rounded),
+                          label: const Text('Add to My Garden Schedule'),
+                        ),
                       ),
-                      _buildTimelineStep(
-                        'Day 4–7: Bullseye Target Spots',
-                        'Concentric ring necrosis with intense yellow chloroplast halo. High spore production underway.',
-                        isActive: true,
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // 2. HEALTH STATUS / DISEASE DIAGNOSIS
+              if (_report.isHealthy) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: Colors.green.shade300),
+                  ),
+                  child: const Column(
+                    children: [
+                      Icon(Icons.check_circle_outline_rounded, size: 48, color: Colors.green),
+                      SizedBox(height: 10),
+                      Text(
+                        'Plant is Healthy & Thriving!',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.green),
                       ),
-                      _buildTimelineStep(
-                        'Day 8–12: Foliar Blight & Defoliation',
-                        'Complete leaflet yellowing, desiccation, and premature drop causing sun scald risk.',
-                        isPending: true,
+                      SizedBox(height: 6),
+                      Text(
+                        'No pathogens, fungal spots, or stress symptoms detected. Foliage shows balanced chlorophyll development.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 13, height: 1.4, color: Colors.black87),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
+              ] else if (_report.diseaseName != null) ...[
+                // DISEASE IDENTIFICATION CARD
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'DETECTED PATHOLOGICAL CONDITION',
+                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: AppColors.urgent, letterSpacing: 0.5),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppColors.urgent.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                'Severity: ${_report.severity}%',
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.urgent),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _report.diseaseName!,
+                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+                        ),
+                        const SizedBox(height: 12),
 
-                // Etiology & Vectors
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color:
-                          isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        // Symptoms
+                        if (_report.symptomsSeen.isNotEmpty) ...[
+                          const Text('Symptoms Detected:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 4),
+                          ..._report.symptomsSeen.map((s) => Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('• ', style: TextStyle(color: AppColors.urgent, fontWeight: FontWeight.bold)),
+                                    Expanded(child: Text(s, style: const TextStyle(fontSize: 12))),
+                                  ],
+                                ),
+                              )),
+                          const SizedBox(height: 12),
+                        ],
+
+                        // Likely Causes
+                        if (_report.likelyCauses.isNotEmpty) ...[
+                          const Text('Likely Underlying Causes:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 4),
+                          ..._report.likelyCauses.map((c) => Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('• ', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+                                    Expanded(child: Text(c, style: const TextStyle(fontSize: 12))),
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ],
                     ),
                   ),
+                ),
+                const SizedBox(height: 16),
+
+                // 3. TREATMENT STEPS & SPRAY PLAN
+                if (_report.treatmentSteps.isNotEmpty) ...[
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '💊 TREATMENT SOLUTIONS & PRESCRIPTION',
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.primaryLight, letterSpacing: 0.5),
+                          ),
+                          const SizedBox(height: 10),
+                          ..._report.treatmentSteps.asMap().entries.map((entry) {
+                            final idx = entry.key + 1;
+                            final step = entry.value;
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: AppColors.primaryGreen,
+                                    child: Text('$idx', style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold)),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(child: Text(step, style: const TextStyle(fontSize: 13, height: 1.4))),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // 4. PREVENTION GUIDE
+                if (_report.preventionTips.isNotEmpty) ...[
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '🛡️ PREVENTION GUIDE & ENVIRONMENTAL CARE',
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.accentEmerald, letterSpacing: 0.5),
+                          ),
+                          const SizedBox(height: 10),
+                          ..._report.preventionTips.map((tip) => Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.check_circle_outline, size: 16, color: AppColors.primaryLight),
+                                    const SizedBox(width: 10),
+                                    Expanded(child: Text(tip, style: const TextStyle(fontSize: 13, height: 1.4))),
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ],
+
+              // 5. AGRONOMIST AI CHAT
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        '🔬 Etiology & Vectors',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 12),
-                      _buildVectorBox(
-                        '💧 Primary Inoculum Trigger',
-                        'Overhead drip splash and persistent leaf wetness > 4.5 hours in poorly ventilated canopy rows.',
-                      ),
-                      const SizedBox(height: 8),
-                      _buildVectorBox(
-                        '🌡️ Thermal Optimum',
-                        'Conidiophores sporulate rapidly between 24°C and 29°C with alternating wet-dry microcycles.',
-                      ),
-                      const SizedBox(height: 8),
-                      _buildVectorBox(
-                        '🎯 Distinctive Diagnostic Marker',
-                        'Alternaria acid secretion creates toxic dark concentric rings and outer golden-yellow chloroplast margin.',
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Action Plan Banner
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: AppColors.darkSurface,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      const Row(
                         children: [
-                          Text(
-                            'Prescription & Spray Plan',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 2),
-                          Text(
-                            'Organic OMRI-listed fungicides ready →',
-                            style: TextStyle(
-                              color: AppColors.accentMint,
-                              fontSize: 12,
-                            ),
+                          Text('👨‍🌾', style: TextStyle(fontSize: 24)),
+                          SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Ask Agronomist AI', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text('Instant follow-up advice tailored to this plant', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                            ],
                           ),
                         ],
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  '⏰ Added 7-Day Liquid Copper spray reminder!'),
-                              backgroundColor: AppColors.primaryGreen,
+                      const SizedBox(height: 16),
+
+                      // Chat message history
+                      if (_chatMessages.isNotEmpty) ...[
+                        ..._chatMessages.map((m) {
+                          final isUser = m['role'] == 'user';
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isUser
+                                  ? AppColors.primaryGreen.withOpacity(0.12)
+                                  : (isDark ? AppColors.darkCard : AppColors.lightBg),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              m['text']!,
+                              style: TextStyle(fontSize: 12, height: 1.4, fontWeight: isUser ? FontWeight.w600 : FontWeight.normal),
                             ),
                           );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryLight,
-                          foregroundColor: Colors.black,
+                        }),
+                        const SizedBox(height: 8),
+                      ],
+
+                      if (_isChatLoading) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            children: [
+                              SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                              SizedBox(width: 10),
+                              Text('Agronomist is analyzing...', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            ],
+                          ),
                         ),
-                        child: const Text('Set Reminder'),
+                      ],
+
+                      // Chat input
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _chatController,
+                              onSubmitted: (_) => _sendChatMessage(),
+                              decoration: const InputDecoration(
+                                hintText: 'Ask about watering, fertilizers, or pruning...',
+                                contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.send_rounded, color: AppColors.primaryGreen),
+                            onPressed: _sendChatMessage,
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
-              ],
-            ),
+              ),
+              const SizedBox(height: 32),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMetaCol(String title, String val) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          val,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTimelineStep(
-    String title,
-    String desc, {
-    bool isResolved = false,
-    bool isActive = false,
-    bool isPending = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: isResolved
-                  ? Colors.green.shade100
-                  : (isActive ? Colors.red.shade100 : Colors.grey.shade200),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              isResolved ? Icons.check : (isActive ? Icons.circle : Icons.schedule),
-              size: 14,
-              color: isResolved
-                  ? Colors.green
-                  : (isActive ? Colors.red : Colors.grey),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: isActive ? Colors.red : Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  desc,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVectorBox(String title, String desc) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.lightBg,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            desc,
-            style: const TextStyle(fontSize: 11, color: Colors.grey),
-          ),
-        ],
       ),
     );
   }

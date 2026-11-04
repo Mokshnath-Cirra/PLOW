@@ -322,6 +322,51 @@ class PlantProvider with ChangeNotifier {
     }
   }
 
+  void markAsWatered(String id, {String? note}) {
+    waterPlant(id, note: note ?? 'Watered according to schedule');
+  }
+
+  void addPlantFromSpecies(
+    dynamic species, {
+    String? customName,
+    String? location,
+  }) {
+    final now = DateTime.now();
+    final name = (customName != null && customName.trim().isNotEmpty)
+        ? customName.trim()
+        : species.commonName.toString().split('(').first.trim();
+
+    final newPlant = Plant(
+      id: 'plant_${now.millisecondsSinceEpoch}',
+      name: name,
+      species: species.scientificName.toString(),
+      location: location ?? 'Balcony / Garden',
+      category: species.type.toString().toUpperCase(),
+      waterIntervalDays: species.waterFrequencyDays as int,
+      mistIntervalDays: (species.type == 'houseplant' || species.type == 'fern') ? 3 : 0,
+      fertilizeIntervalDays: 30,
+      sunlight: species.light.toString().toLowerCase().contains('direct')
+          ? SunlightLevel.directSunlight
+          : SunlightLevel.indirectBright,
+      lastWatered: now,
+      notes: '${species.growthNotes} ${species.waterNotes}',
+      healthScore: 98,
+      emojiAvatar: (species.type == 'tree')
+          ? '🌳'
+          : (species.type == 'flower' ? '🌸' : '🌿'),
+      logs: [
+        CareLog(
+          id: 'init_${now.millisecondsSinceEpoch}',
+          type: CareType.water,
+          timestamp: now,
+          note: 'Added from Plant Library to My Garden',
+        ),
+      ],
+    );
+
+    addPlant(newPlant);
+  }
+
   void performCare(String plantId, CareType type, {String? note}) {
     switch (type) {
       case CareType.water:
@@ -353,3 +398,4 @@ class PlantProvider with ChangeNotifier {
     }
   }
 }
+

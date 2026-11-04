@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FloraScan & PLOW — AI Plant Identification, Disease Detection & Care</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>FloraScan & PLOW — AI Plant Care & Phytosanitary Diagnosis</title>
+  <meta name="description" content="AI plant identification, disease diagnosis, watering reminders, and botanical library with 180+ species.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -21,6 +22,7 @@
       --alert-red: #EF4444;
       --alert-bg: rgba(239, 68, 68, 0.12);
       --warning-amber: #F59E0B;
+      --warning-bg: rgba(245, 158, 11, 0.12);
       --water-blue: #38BDF8;
       --text-main: #111827;
       --text-muted: #6B7280;
@@ -36,7 +38,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -46,7 +48,6 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
       overflow-x: hidden;
     }
 
@@ -62,12 +63,14 @@
       position: sticky;
       top: 0;
       z-index: 1000;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
 
     .toolbar-brand {
       display: flex;
       align-items: center;
       gap: 10px;
+      cursor: pointer;
     }
 
     .toolbar-logo {
@@ -96,6 +99,17 @@
       padding: 3px 8px;
       border-radius: 6px;
       font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pulse-dot-sm {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-bright);
+      animation: pulse 1.8s infinite;
     }
 
     .view-toggles {
@@ -127,47 +141,155 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
-    /* App Workspace Container */
-    .app-viewport {
+    /* Main Layout Framework */
+    .app-workspace {
       width: 100%;
+      flex: 1;
       display: flex;
       justify-content: center;
-      padding: 24px 16px 40px;
-      transition: all 0.3s ease;
+      padding: 16px 16px 40px;
     }
 
-    /* iPhone / Mobile Simulation Frame (Matches Reference Photos) */
-    .mobile-frame {
-      width: 410px;
-      min-height: 860px;
-      background: #F4F5F1;
-      border-radius: 50px;
-      box-shadow: 0 25px 60px -15px rgba(0,0,0,0.2), 0 0 0 12px #1E2421;
-      position: relative;
+    /* DESKTOP LAYOUT (> 1024px) */
+    .desktop-layout {
+      width: 100%;
+      max-width: 1320px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    /* Left Sidebar Rail */
+    .desktop-sidebar {
+      width: 250px;
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 20px 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 76px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section-title {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      padding: 10px 12px 4px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .sidebar-item:hover {
+      background: #F8FAF8;
+      color: var(--primary-green);
+    }
+
+    .sidebar-item.active {
+      background: var(--surface-dark);
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .sidebar-item.active .sidebar-icon {
+      filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.4));
+    }
+
+    .sidebar-icon {
+      font-size: 18px;
+      width: 22px;
+      text-align: center;
+    }
+
+    .sidebar-badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(34, 197, 94, 0.12);
+      color: var(--accent-emerald);
+    }
+
+    .sidebar-item.active .sidebar-badge {
+      background: rgba(255, 255, 255, 0.18);
+      color: #FFFFFF;
+    }
+
+    .backend-status-card {
+      margin-top: 18px;
+      padding: 12px;
+      background: #F8FAF9;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 11px;
+    }
+
+    .backend-status-card .status-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    /* Main Content Area */
+    .main-viewport {
+      flex: 1;
+      min-width: 0;
+      background: #FFFFFF;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      min-height: 850px;
+      position: relative;
     }
 
-    /* Responsive Mode: Expanded for Full Desktop */
-    .app-viewport.desktop-view .mobile-frame {
-      width: 100%;
-      max-width: 1280px;
-      border-radius: 24px;
-      box-shadow: var(--shadow-lg);
-      border: 1px solid var(--border);
-      min-height: 880px;
+    /* MOBILE SIMULATION VIEWPORT */
+    .mobile-simulation-container {
+      width: 410px;
+      margin: 0 auto;
+      border-radius: 46px;
+      box-shadow: 0 25px 60px -15px rgba(0,0,0,0.2), 0 0 0 10px #1E2421;
+      background: #F4F5F1;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 860px;
     }
 
-    .app-viewport.desktop-view .mobile-frame {
-      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.06);
+    .mobile-simulation-container .main-viewport {
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      background: transparent;
+      min-height: 100%;
     }
 
-    /* Dynamic Island / Notch on Mobile View */
     .dynamic-island {
       width: 120px;
-      height: 28px;
+      height: 26px;
       background: #000000;
       border-radius: 20px;
       position: absolute;
@@ -183,51 +305,31 @@
     }
 
     .island-cam {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       background: #111;
       border: 1.5px solid #222;
     }
 
     .island-sensor {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: #0d1e17;
     }
 
-    .desktop-view .dynamic-island {
-      display: none;
-    }
-
-    /* Status Bar */
-    .status-bar {
-      padding: 14px 28px 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: -0.2px;
-      z-index: 50;
-    }
-
-    .desktop-view .status-bar {
-      display: none;
-    }
-
     /* Screen Views */
     .screen-container {
+      display: none;
+      padding: 24px;
       flex: 1;
       overflow-y: auto;
-      padding: 12px 20px 100px;
-      display: none;
     }
 
     .screen-container.active {
       display: block;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.22s ease-out;
     }
 
     @keyframes fadeIn {
@@ -235,278 +337,105 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* SCREEN 1: HOME / DASHBOARD (Reference Screen 1 & 2) */
-    .app-header {
+    /* Dashboard Header */
+    .dash-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
-    .app-brand-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-box {
-      width: 32px;
-      height: 32px;
-      background: var(--surface-dark);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-    }
-
-    .brand-name {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--surface-dark);
-      letter-spacing: -0.5px;
-    }
-
-    .app-actions-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .notif-bell {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      position: relative;
-      cursor: pointer;
-    }
-
-    .notif-dot {
-      width: 7px;
-      height: 7px;
-      background: var(--alert-red);
-      border-radius: 50%;
-      position: absolute;
-      top: 6px;
-      right: 6px;
-    }
-
-    .user-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop') center/cover;
-      border: 2px solid #FFFFFF;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .greeting-pill-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-
-    .greeting-text {
+    .dash-greeting-label {
       font-size: 11px;
       font-weight: 800;
-      letter-spacing: 0.8px;
       text-transform: uppercase;
+      letter-spacing: 0.8px;
       color: var(--accent-emerald);
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+      margin-bottom: 4px;
     }
 
-    .live-sync-badge {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: var(--surface-dark);
-      color: #FFFFFF;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-
-    .pulse-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--accent-neon);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--accent-neon);
-      animation: pulse 1.8s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.3); }
-    }
-
-    .hero-title {
-      font-size: 25px;
+    .dash-hero-title {
+      font-size: 26px;
       font-weight: 900;
       letter-spacing: -0.6px;
-      color: var(--text-main);
+      color: var(--surface-dark);
       line-height: 1.15;
     }
 
-    .hero-title span.thriving {
+    .dash-hero-title span.thriving {
       position: relative;
       display: inline-block;
       color: var(--surface-dark);
     }
 
-    .hero-title span.thriving::after {
+    .dash-hero-title span.thriving::after {
       content: '';
       position: absolute;
       left: 0;
-      bottom: -3px;
+      bottom: -2px;
       width: 100%;
-      height: 3.5px;
+      height: 4px;
       background: var(--accent-bright);
       border-radius: 2px;
     }
 
-    .location-sub {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-top: 6px;
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* AI Drone Telemetry Hero Card */
-    .drone-hero-card {
-      width: 100%;
-      height: 180px;
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(13,25,18,0.2) 0%, rgba(13,25,18,0.85) 100%),
-                  url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop') center/cover;
-      position: relative;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    /* Vitality Dark Card */
+    .vitality-hero-card {
+      background: var(--surface-dark);
+      border-radius: 22px;
+      padding: 20px 22px;
       color: #FFFFFF;
+      margin-bottom: 24px;
+      border: 1px solid var(--border-dark);
       box-shadow: var(--shadow-md);
-      margin-bottom: 16px;
+      position: relative;
       overflow: hidden;
     }
 
-    .drone-badge-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .vitality-hero-card::after {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+      pointer-events: none;
     }
 
-    .drone-pill {
-      background: rgba(13, 25, 18, 0.7);
-      backdrop-filter: blur(8px);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .drone-card-bottom {
+    .vitality-card-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
+      align-items: center;
+      margin-bottom: 16px;
     }
 
-    .scan-status-label {
-      font-size: 10px;
-      text-transform: uppercase;
+    .vitality-card-title {
+      font-size: 14px;
       font-weight: 800;
-      letter-spacing: 0.8px;
-      color: #A7F3D0;
-    }
-
-    .scan-status-val {
-      font-size: 19px;
-      font-weight: 900;
-      letter-spacing: -0.3px;
-    }
-
-    .health-index-pill {
-      background: rgba(13, 25, 18, 0.85);
-      border: 1px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(8px);
-      padding: 6px 12px;
-      border-radius: 12px;
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--accent-neon);
+      gap: 8px;
+      letter-spacing: -0.2px;
     }
 
-    /* Overall Crop Vitality Dark Card */
-    .vitality-card {
-      background: var(--surface-dark);
-      border-radius: 24px;
-      padding: 18px 20px;
-      color: #FFFFFF;
-      margin-bottom: 22px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-dark);
-    }
-
-    .vitality-header {
-      display: flex;
-      justify-content: space-between;
+    .vitality-inner-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
       align-items: center;
-      margin-bottom: 14px;
     }
 
-    .vitality-title {
-      font-size: 13px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #E2E8F0;
-    }
-
-    .batch-badge {
-      background: #1F3628;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 8px;
-      color: #A7F3D0;
-    }
-
-    .vitality-content {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .circular-gauge {
-      width: 86px;
-      height: 86px;
+    .circular-gauge-box {
+      width: 90px;
+      height: 90px;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
     }
 
     .gauge-svg {
@@ -527,1074 +456,1132 @@
       stroke-width: 8;
       stroke-linecap: round;
       stroke-dasharray: 226;
-      stroke-dashoffset: 20;
-      transition: stroke-dashoffset 1s ease;
+      stroke-dashoffset: 28;
+      transition: stroke-dashoffset 0.8s ease;
     }
 
-    .gauge-inner {
+    .gauge-inner-text {
       position: absolute;
       text-align: center;
     }
 
-    .gauge-val {
-      font-size: 20px;
+    .gauge-score {
+      font-size: 22px;
       font-weight: 900;
       line-height: 1;
     }
 
-    .gauge-sub {
+    .gauge-sub-lbl {
       font-size: 9px;
       font-weight: 800;
+      color: #94A3B8;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #94A3B8;
     }
 
-    .vitality-metrics {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .vitality-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
 
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      padding-bottom: 4px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+    .vitality-stat-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
     }
 
-    .metric-name {
-      color: #94A3B8;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .metric-val {
-      font-weight: 700;
+    .vitality-stat-num {
+      font-size: 17px;
+      font-weight: 900;
       color: #F8FAFC;
     }
 
-    /* Monitored Plots Section */
-    .section-header-row {
+    .vitality-stat-name {
+      font-size: 11px;
+      color: #94A3B8;
+      margin-top: 2px;
+    }
+
+    /* Dashboard Action Banner */
+    .scan-cta-banner {
+      background: linear-gradient(135deg, #1B4D36 0%, #0D1912 100%);
+      border-radius: 20px;
+      padding: 22px 24px;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .scan-cta-text h3 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .scan-cta-text p {
+      font-size: 13px;
+      color: #A7F3D0;
+      margin-top: 4px;
+      max-width: 480px;
+    }
+
+    .btn-emerald {
+      background: var(--accent-bright);
+      color: #062D19;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+    }
+
+    .btn-emerald:hover {
+      background: #16A34A;
+      transform: translateY(-1px);
+    }
+
+    /* Care Task Grid */
+    .section-title-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
-    .section-main-heading {
-      font-size: 17px;
+    .section-heading {
+      font-size: 18px;
       font-weight: 800;
       color: var(--text-main);
+      letter-spacing: -0.3px;
     }
 
-    .section-action-link {
+    .section-link {
       font-size: 12px;
       font-weight: 700;
       color: var(--accent-emerald);
       cursor: pointer;
     }
 
-    .plot-card {
-      background: var(--card-bg);
+    .task-card-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .task-card {
+      background: #FFFFFF;
       border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: 16px;
       padding: 14px 16px;
       display: flex;
       align-items: center;
       gap: 14px;
-      margin-bottom: 12px;
       box-shadow: var(--shadow-sm);
-      cursor: pointer;
-      transition: all 0.2s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .plot-card:hover {
+    .task-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
-      border-color: #CBD5E1;
     }
 
-    .plot-thumb {
-      width: 54px;
-      height: 54px;
-      border-radius: 14px;
+    .task-thumb {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
       background-size: cover;
       background-position: center;
       flex-shrink: 0;
     }
 
-    .plot-info {
+    .task-meta {
       flex: 1;
+      min-width: 0;
     }
 
-    .plot-name-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 3px;
-    }
-
-    .plot-title {
+    .task-plant-name {
       font-size: 14px;
       font-weight: 800;
       color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .health-badge {
-      font-size: 10px;
+    .task-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .btn-water-action {
+      background: #E0F2FE;
+      color: #0284C7;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
       font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s ease;
     }
 
-    .health-badge.good {
-      background: rgba(16, 185, 129, 0.12);
-      color: var(--accent-emerald);
+    .btn-water-action:hover {
+      background: #BAE6FD;
     }
 
-    .health-badge.alert {
-      background: rgba(239, 68, 68, 0.12);
-      color: var(--alert-red);
+    .btn-water-action.done {
+      background: #DCFCE7;
+      color: #15803D;
     }
 
-    .plot-details {
+    /* ====================================================
+       SCREEN 2: SCANNER & DETECTION
+       ==================================================== */
+    .scanner-layout-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 860px) {
+      .scanner-layout-grid {
+        grid-template-columns: 1.1fr 1fr;
+      }
+    }
+
+    .viewfinder-card {
+      background: var(--surface-dark);
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 4/3;
+      max-height: 460px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viewfinder-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter 0.3s ease;
+    }
+
+    .viewfinder-hud {
+      position: absolute;
+      inset: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .hud-interactive {
+      pointer-events: auto;
+    }
+
+    .hud-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-pill {
+      background: rgba(13, 25, 18, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .hud-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(13, 25, 18, 0.75);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      font-size: 14px;
+    }
+
+    /* Reticle & Laser */
+    .scanner-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 65%;
+      height: 65%;
+      pointer-events: none;
+    }
+
+    .reticle-corner {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-color: var(--accent-neon);
+      border-style: solid;
+    }
+
+    .c-tl { top: 0; left: 0; border-width: 3.5px 0 0 3.5px; border-top-left-radius: 8px; }
+    .c-tr { top: 0; right: 0; border-width: 3.5px 3.5px 0 0; border-top-right-radius: 8px; }
+    .c-bl { bottom: 0; left: 0; border-width: 0 0 3.5px 3.5px; border-bottom-left-radius: 8px; }
+    .c-br { bottom: 0; right: 0; border-width: 0 3.5px 3.5px 0; border-bottom-right-radius: 8px; }
+
+    .laser-line {
+      position: absolute;
+      width: 100%;
+      height: 2.5px;
+      background: linear-gradient(90deg, transparent, #22C55E 30%, #4ADE80 50%, #22C55E 70%, transparent);
+      box-shadow: 0 0 14px #22C55E, 0 0 6px #86EFAC;
+      top: 0;
+      animation: scanLaser 2.2s infinite ease-in-out;
+    }
+
+    @keyframes scanLaser {
+      0% { top: 5%; opacity: 0.2; }
+      50% { top: 95%; opacity: 1; }
+      100% { top: 5%; opacity: 0.2; }
+    }
+
+    .scanner-detection-pill {
+      position: absolute;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface-dark);
+      border: 1.5px solid var(--accent-bright);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #A7F3D0;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+
+    /* Controls Panel */
+    .scanner-controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .drag-drop-zone {
+      border: 2px dashed #CBD5E1;
+      border-radius: 18px;
+      padding: 24px 16px;
+      text-align: center;
+      background: #F8FAF9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .drag-drop-zone:hover, .drag-drop-zone.dragover {
+      border-color: var(--accent-bright);
+      background: #F0FDF4;
+    }
+
+    .drag-drop-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .drag-drop-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--surface-dark);
+    }
+
+    .drag-drop-sub {
       font-size: 11px;
       color: var(--text-muted);
-      margin-bottom: 4px;
+      margin-top: 4px;
     }
 
-    .plot-status-tag {
+    .scanner-action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-action-primary {
+      flex: 1;
+      background: var(--surface-dark);
+      color: #FFFFFF;
+      border: 1px solid var(--border-dark);
+      padding: 13px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-action-primary:hover {
+      background: #14241B;
+      border-color: var(--accent-bright);
+    }
+
+    /* Demo Specimen Row */
+    .demo-specimens-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .demo-specimen-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .demo-pill-badge {
+      font-size: 10px;
+      background: #FEF3C7;
+      color: #D97706;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .demo-specimen-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .demo-pill-btn {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      border-radius: 10px;
       font-size: 11px;
       font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .demo-pill-btn:hover {
+      border-color: var(--accent-bright);
+      background: #F0FDF4;
+    }
+
+    /* Loading Scanner State */
+    .scanner-loading-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(13, 25, 18, 0.88);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .scanner-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(34, 197, 94, 0.2);
+      border-top-color: var(--accent-bright);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 14px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ====================================================
+       SCREEN 3: DIAGNOSIS & LAB REPORT (User's Exact Rules)
+       ==================================================== */
+    .diag-report-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .diag-top-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .diag-confidence-tag {
+      background: var(--surface-dark);
+      color: #A7F3D0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Primary Identity Banner (Plant Common Name + Scientific Name + Confidence FIRST) */
+    .plant-identity-header-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .plant-identity-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .plant-avatar-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: var(--surface-dark);
+      color: var(--accent-neon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 4px 12px rgba(13, 25, 18, 0.15);
+    }
+
+    .plant-identity-titles h2 {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--surface-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .plant-scientific-name {
+      font-size: 14px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .plant-badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 8px;
+    }
+
+    .badge-family {
+      background: #F1F5F9;
+      color: #475569;
+    }
+
+    .badge-verified-db {
+      background: #DCFCE7;
+      color: #15803D;
       display: flex;
       align-items: center;
       gap: 4px;
     }
 
-    .status-good {
-      color: var(--accent-emerald);
+    .badge-unverified {
+      background: #FEF3C7;
+      color: #B45309;
     }
 
-    .status-alert {
-      color: var(--alert-red);
+    /* Warning / Celebration Banners */
+    .status-banner {
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
-    /* SCREEN 2: LIVE AI SCANNER (Reference Screen 3) */
-    .scanner-viewfinder {
-      width: 100%;
-      height: 480px;
-      border-radius: 28px;
-      position: relative;
-      overflow: hidden;
-      background: #000000;
-      box-shadow: var(--shadow-lg);
+    .banner-not-plant {
+      background: var(--alert-bg);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #991B1B;
+    }
+
+    .banner-healthy {
+      background: #DCFCE7;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #14532D;
+    }
+
+    .banner-low-confidence {
+      background: var(--warning-bg);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #92400E;
+    }
+
+    /* Two-Column Report Details */
+    .diag-details-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 900px) {
+      .diag-details-grid {
+        grid-template-columns: 1.1fr 1fr;
+      }
+    }
+
+    /* Disease Pathology Card */
+    .disease-specimen-card {
+      background: var(--surface-dark);
+      border-radius: 20px;
+      padding: 22px;
+      color: #FFFFFF;
+      border: 1px solid var(--border-dark);
+      box-shadow: var(--shadow-md);
+    }
+
+    .disease-header-badge {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #F87171;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .disease-title-main {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.4px;
+    }
+
+    .disease-severity-meter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 18px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .symptoms-chip-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .symptom-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      color: #E2E8F0;
+    }
+
+    .symptom-bullet {
+      color: var(--accent-bright);
+      font-weight: 900;
+    }
+
+    /* Prescription & Treatment Card */
+    .rx-treatment-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .rx-header-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 16px;
     }
 
-    .scanner-feed-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: brightness(0.92);
-      transition: filter 0.3s ease;
+    .rx-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--surface-dark);
     }
 
-    .scanner-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
+    .step-list {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 16px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.8) 100%);
+      gap: 10px;
     }
 
-    .scanner-hud-top {
+    .step-item {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      pointer-events: auto;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--text-sub);
     }
 
-    .hud-btn {
-      width: 36px;
-      height: 36px;
+    .step-num {
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: var(--surface-dark);
       color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .crop-selector-pill {
-      background: rgba(13, 25, 18, 0.75);
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(12px);
-      color: #FFFFFF;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .target-status-bar {
-      align-self: center;
-      background: rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(10px);
-      padding: 5px 12px;
-      border-radius: 14px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    /* Scanner Center Target Brackets */
-    .scanner-reticle-box {
-      position: absolute;
-      top: 45%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 190px;
-      height: 190px;
-      border: 2px dashed rgba(34, 197, 94, 0.5);
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(34, 197, 94, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .reticle-corner {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      border-color: var(--accent-bright);
-      border-style: solid;
-    }
-
-    .c-top-left { top: -2px; left: -2px; border-width: 4px 0 0 4px; border-top-left-radius: 12px; }
-    .c-top-right { top: -2px; right: -2px; border-width: 4px 4px 0 0; border-top-right-radius: 12px; }
-    .c-bot-left { bottom: -2px; left: -2px; border-width: 0 0 4px 4px; border-bottom-left-radius: 12px; }
-    .c-bot-right { bottom: -2px; right: -2px; border-width: 0 4px 4px 0; border-bottom-right-radius: 12px; }
-
-    .ai-detected-pill {
-      position: absolute;
-      top: -38px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.85);
-      border: 1px solid var(--accent-bright);
-      color: #FFFFFF;
-      padding: 5px 12px;
-      border-radius: 12px;
       font-size: 11px;
       font-weight: 800;
-      white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-
-    .laser-scan-line {
-      position: absolute;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent-bright), transparent);
-      box-shadow: 0 0 10px var(--accent-bright);
-      top: 0;
-      animation: scanLaser 2.2s ease-in-out infinite alternate;
-    }
-
-    @keyframes scanLaser {
-      0% { top: 5%; }
-      100% { top: 95%; }
-    }
-
-    /* Spectral Filter Modes */
-    .spectral-modes-row {
-      display: flex;
       justify-content: center;
-      gap: 6px;
-      margin-bottom: 12px;
+      flex-shrink: 0;
+      margin-top: 2px;
     }
 
-    .mode-tab {
+    /* Agronomist CTA Card */
+    .agronomist-cta-card {
+      background: #F0FDF4;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .agronomist-avatar-grp {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .agronomist-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    /* ====================================================
+       SCREEN 4: PLANT LIBRARY (180+ Species)
+       ==================================================== */
+    .library-search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search-input-field {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s ease;
+      background: #FFFFFF;
+    }
+
+    .search-input-field:focus {
+      border-color: var(--accent-bright);
+    }
+
+    .filter-pills-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+      scrollbar-width: none;
+    }
+
+    .filter-pills-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pill {
       background: #FFFFFF;
       border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 11px;
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 12px;
       font-weight: 700;
+      color: var(--text-sub);
       cursor: pointer;
-      transition: all 0.2s ease;
+      white-space: nowrap;
+      transition: all 0.15s ease;
     }
 
-    .mode-tab.active {
+    .filter-pill.active {
       background: var(--surface-dark);
       color: #FFFFFF;
       border-color: var(--surface-dark);
     }
 
-    /* Camera Bottom Controls */
-    .camera-shutter-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding: 10px 0;
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
     }
 
-    .cam-sub-btn {
+    .plant-card-item {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .cam-sub-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .shutter-leaf-btn {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: var(--accent-bright);
-      border: 5px solid #FFFFFF;
-      box-shadow: 0 0 0 4px var(--accent-neon), 0 8px 24px rgba(34, 197, 94, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #FFFFFF;
-      font-size: 30px;
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-
-    .shutter-leaf-btn:active {
-      transform: scale(0.92);
-    }
-
-    /* Specimen Switcher Drawer */
-    .specimen-bar {
-      margin-top: 14px;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px 14px;
-    }
-
-    .specimen-label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-
-    .specimen-pills {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .specimen-pill {
-      padding: 6px 12px;
-      border-radius: 10px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .specimen-pill.active {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: var(--accent-emerald);
-      color: var(--primary-green);
-    }
-
-    /* SCREEN 3: SMART DIAGNOSIS & DISEASE DETAIL (Reference Image 3 & 4) */
-    .diag-top-nav {
-      display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .diag-confidence-pill {
-      background: #000000;
-      color: #FFFFFF;
-      padding: 5px 14px;
-      border-radius: 20px;
+    .plant-card-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-bright);
+    }
+
+    .plant-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .plant-card-icon {
+      font-size: 26px;
+    }
+
+    .plant-card-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--surface-dark);
+      margin-top: 4px;
+    }
+
+    .plant-card-sci {
       font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .diag-breadcrumb {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* Pathological ID Hero Card */
-    .pathology-hero-card {
-      width: 100%;
-      border-radius: 24px;
-      position: relative;
-      overflow: hidden;
-      background: #0D1912;
-      box-shadow: var(--shadow-lg);
-      margin-bottom: 18px;
-    }
-
-    .pathology-img-container {
-      width: 100%;
-      height: 220px;
-      position: relative;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .pathology-target-box {
-      position: absolute;
-      top: 30%;
-      left: 40%;
-      width: 100px;
-      height: 100px;
-      border: 2px solid var(--accent-bright);
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
-    }
-
-    .target-tag {
-      position: absolute;
-      top: -22px;
-      left: 0;
-      background: rgba(0,0,0,0.8);
-      color: #FFFFFF;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 6px;
-      border: 1px solid var(--accent-bright);
-    }
-
-    .stage-badge-top {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      background: rgba(239, 68, 68, 0.9);
-      color: #FFFFFF;
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .spectral-tag-top {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      color: #FFFFFF;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .pathology-info-content {
-      padding: 18px 20px;
-      background: linear-gradient(180deg, rgba(13,25,18,0.95) 0%, #08100C 100%);
-      color: #FFFFFF;
-    }
-
-    .pathology-sub-id {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: var(--accent-neon);
-      margin-bottom: 2px;
-    }
-
-    .pathology-disease-title {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-    }
-
-    .pathology-scientific {
-      font-size: 13px;
       font-style: italic;
-      color: #94A3B8;
-      margin-bottom: 16px;
+      color: var(--text-muted);
     }
 
-    .pathology-meta-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 12px;
-    }
-
-    .meta-col-title {
-      font-size: 9px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: #94A3B8;
-      letter-spacing: 0.5px;
-    }
-
-    .meta-col-val {
-      font-size: 12px;
-      font-weight: 800;
-      color: #F8FAFC;
+    .plant-card-regional {
+      font-size: 11px;
+      color: var(--accent-emerald);
+      font-weight: 600;
       margin-top: 2px;
     }
 
-    /* Severity Risk Matrix Card */
-    .severity-matrix-card {
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .severity-matrix-header {
+    .plant-care-tags {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .matrix-title {
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .matrix-plot-tag {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .severity-body {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .severity-score-left {
-      flex: 1;
-    }
-
-    .alert-pill-text {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--alert-red);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 4px;
-    }
-
-    .score-number {
-      font-size: 34px;
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -1px;
-    }
-
-    .score-number span {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .severity-desc {
-      font-size: 11px;
-      color: var(--text-sub);
-      font-weight: 600;
-      margin-top: 6px;
-      line-height: 1.35;
-      max-width: 220px;
-    }
-
-    /* Progression Wave (Timeline from Screenshot) */
-    .progression-card {
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .progression-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .progression-title-grp {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .progression-title {
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .progression-tag {
-      background: rgba(16, 185, 129, 0.12);
-      color: var(--accent-emerald);
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 8px;
-    }
-
-    .timeline-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      position: relative;
-    }
-
-    .timeline-item {
-      display: flex;
-      gap: 12px;
-      position: relative;
-    }
-
-    .timeline-dot {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      flex-shrink: 0;
-      z-index: 2;
-    }
-
-    .timeline-dot.resolved {
-      background: #DCFCE7;
-      color: var(--accent-emerald);
-    }
-
-    .timeline-dot.active {
-      background: var(--surface-dark);
-      color: var(--accent-neon);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
-    }
-
-    .timeline-dot.pending {
-      background: #F1F5F9;
-      color: #94A3B8;
-    }
-
-    .timeline-content {
-      flex: 1;
-    }
-
-    .timeline-top-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2px;
-    }
-
-    .timeline-step-name {
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .timeline-status-badge {
-      font-size: 9px;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 6px;
-    }
-
-    .timeline-status-badge.active-badge {
-      background: var(--alert-red);
-      color: #FFFFFF;
-    }
-
-    .timeline-status-badge.resolved-badge {
-      background: #E2E8F0;
-      color: #64748B;
-    }
-
-    .timeline-desc {
-      font-size: 11px;
-      color: var(--text-sub);
-      line-height: 1.4;
-    }
-
-    /* Etiology & Vectors Card */
-    .etiology-card {
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .etiology-title {
-      font-size: 15px;
-      font-weight: 800;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
       gap: 6px;
+      margin-top: 8px;
     }
 
-    .vector-item {
-      background: var(--bg);
+    .care-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #F1F5F9;
+      color: #334155;
+    }
+
+    /* ====================================================
+       SCREEN 5: MY GARDEN & WATERING SCHEDULE
+       ==================================================== */
+    .garden-stat-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .garden-stat-box {
+      background: #FFFFFF;
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
+      padding: 14px;
+      text-align: center;
     }
 
-    .vector-label {
-      font-size: 12px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text-main);
-      margin-bottom: 4px;
-    }
-
-    .vector-desc {
-      font-size: 11px;
-      color: var(--text-sub);
-      line-height: 1.4;
-    }
-
-    /* Prescription & Action CTA */
-    .prescription-banner {
-      background: var(--surface-dark);
-      border-radius: 18px;
-      padding: 16px 20px;
-      color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-
-    .presc-title {
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .presc-sub {
-      font-size: 11px;
-      color: #A7F3D0;
-      margin-top: 2px;
-    }
-
-    .presc-btn-circle {
-      width: 36px;
-      height: 36px;
-      background: var(--accent-bright);
-      color: #000000;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .secondary-action-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .action-sub-btn {
-      flex: 1;
-      padding: 11px;
-      border-radius: 12px;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      cursor: pointer;
-    }
-
-    .action-sub-btn:hover {
-      background: #F8FAFC;
-    }
-
-    /* SCREEN 4: TREATMENT & CARE TIPS */
-    .treatment-card {
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .step-badge {
-      display: inline-block;
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--accent-emerald);
-      font-size: 11px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
-
-    .treatment-h3 {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .treatment-p {
-      font-size: 13px;
-      color: var(--text-sub);
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-
-    .care-specs-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .spec-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-    }
-
-    .spec-name {
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    .spec-val {
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-top: 2px;
-    }
-
-    /* Floating Glassmorphic Bottom Navigation Bar */
-    .glass-bottom-bar {
-      position: absolute;
-      bottom: 18px;
-      left: 20px;
-      right: 20px;
-      height: 64px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      border-radius: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12);
-      z-index: 200;
-    }
-
-    .nav-tab-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      color: #94A3B8;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 50px;
-      transition: all 0.2s ease;
-    }
-
-    .nav-tab-item.active {
+    .garden-stat-val {
+      font-size: 24px;
+      font-weight: 900;
       color: var(--surface-dark);
     }
 
-    .nav-tab-icon {
-      font-size: 18px;
+    .garden-stat-lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 2px;
     }
 
-    /* Floating Center Leaf Action Button */
-    .center-leaf-trigger {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--surface-dark);
-      border: 3px solid #FFFFFF;
-      box-shadow: 0 4px 16px rgba(13, 25, 18, 0.35);
+    .garden-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .garden-plant-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
       display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .garden-card-header {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      color: var(--accent-neon);
-      font-size: 22px;
-      cursor: pointer;
-      margin-top: -24px;
-      transition: transform 0.2s ease;
     }
 
-    .center-leaf-trigger:hover {
-      transform: scale(1.08);
+    .watering-urgency-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
     }
 
-    /* Modal / Toast */
+    .urgent-water {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+
+    .upcoming-water {
+      background: #E0F2FE;
+      color: #0284C7;
+    }
+
+    .done-water {
+      background: #DCFCE7;
+      color: #16A34A;
+    }
+
+    /* Modals & Dialogs */
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(6px);
       display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
       align-items: center;
       justify-content: center;
-      z-index: 2000;
-      padding: 16px;
+      padding: 20px;
     }
 
     .modal-overlay.open {
       display: flex;
     }
 
-    .modal-inner-card {
+    .modal-card {
       background: #FFFFFF;
       border-radius: 24px;
-      max-width: 480px;
+      max-width: 540px;
       width: 100%;
-      padding: 24px;
-      box-shadow: var(--shadow-lg);
       max-height: 85vh;
       overflow-y: auto;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .toast-pill {
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Bottom Nav Bar for Mobile */
+    .glass-bottom-nav {
+      display: none;
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 8px 16px 14px;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 900;
+    }
+
+    @media (max-width: 1024px) {
+      .desktop-sidebar {
+        display: none;
+      }
+      .glass-bottom-nav {
+        display: flex;
+      }
+      .mobile-simulation-container {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+      }
+    }
+
+    .nav-tab-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.15s ease;
+    }
+
+    .nav-tab-btn.active {
+      color: var(--primary-green);
+    }
+
+    .nav-tab-btn .tab-icon {
+      font-size: 20px;
+    }
+
+    .center-leaf-action {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--surface-dark);
+      color: var(--accent-neon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 14px rgba(13, 25, 18, 0.3);
+      border: 3px solid #FFFFFF;
+      margin-top: -20px;
+      cursor: pointer;
+    }
+
+    /* Toast Pill */
+    .toast-container {
       position: fixed;
       bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
       background: var(--surface-dark);
       color: #FFFFFF;
-      padding: 12px 22px;
+      padding: 10px 20px;
       border-radius: 30px;
       font-size: 13px;
       font-weight: 700;
       display: none;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      box-shadow: var(--shadow-lg);
       z-index: 3000;
-      animation: slideUp 0.3s ease;
+      border: 1px solid var(--border-dark);
     }
 
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+    .chat-bubble {
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      margin-bottom: 10px;
+      max-width: 85%;
     }
 
-    /* Responsive Desktop Grid Layout */
-    .desktop-view .screen-container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 24px 32px 60px;
+    .chat-bubble.ai {
+      background: #F1F5F9;
+      color: var(--text-main);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
     }
 
-    .desktop-view .desktop-two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    .desktop-view .glass-bottom-bar {
-      position: sticky;
-      bottom: 20px;
-      max-width: 500px;
-      margin: 0 auto;
+    .chat-bubble.user {
+      background: var(--surface-dark);
+      color: #FFFFFF;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
     }
   </style>
 </head>
@@ -1602,887 +1589,1037 @@
 
   <!-- Top Global Switcher Bar -->
   <header class="top-toolbar">
-    <div class="toolbar-brand">
+    <div class="toolbar-brand" onclick="switchViewScreen('home')">
       <div class="toolbar-logo">🌿</div>
-      <div class="toolbar-title">FloraScan • PLOW</div>
-      <span class="toolbar-tag">AI AgriTech Engine</span>
+      <div>
+        <div class="toolbar-title">FloraScan & PLOW</div>
+      </div>
+      <span class="toolbar-tag"><span class="pulse-dot-sm"></span> Gemini Vision AI</span>
     </div>
 
-    <!-- View Mode Switcher -->
+    <!-- Responsive Viewport Switcher -->
     <div class="view-toggles">
-      <button class="view-btn active" onclick="setViewMode('mobile', this)">
-        <span>📱</span> Mobile Mockup (Reference)
+      <button class="view-btn active" id="btnDeskMode" onclick="setAppViewportMode('desktop', this)">
+        <span>💻</span> Desktop Website
       </button>
-      <button class="view-btn" onclick="setViewMode('desktop', this)">
-        <span>💻</span> Responsive Desktop Mode
+      <button class="view-btn" id="btnPhoneMode" onclick="setAppViewportMode('mobile', this)">
+        <span>📱</span> Mobile View
+      </button>
+      <button class="view-btn" onclick="openSettingsModal()">
+        <span>⚙️</span> API Settings
       </button>
     </div>
   </header>
 
-  <!-- Viewport -->
-  <main class="app-viewport" id="appViewport">
-    <div class="mobile-frame">
-      <!-- Dynamic Island for Mobile Frame -->
-      <div class="dynamic-island">
-        <div class="island-cam"></div>
-        <div class="island-sensor"></div>
-      </div>
+  <!-- App Workspace -->
+  <div class="app-workspace" id="appWorkspace">
+    <div class="desktop-layout" id="mainLayoutWrap">
 
-      <!-- Mobile Status Bar -->
-      <div class="status-bar">
-        <span>12:48</span>
-        <div style="display: flex; gap: 6px; align-items: center;">
-          <span>5G</span>
-          <span>100%</span>
+      <!-- Left Sidebar Navigation (Desktop) -->
+      <aside class="desktop-sidebar" id="desktopSidebar">
+        <div class="sidebar-section-title">Navigation</div>
+        <div class="sidebar-item active" id="slink-home" onclick="switchViewScreen('home')">
+          <span class="sidebar-icon">🏠</span>
+          <span>Dashboard</span>
         </div>
-      </div>
-
-      <!-- ==================== SCREEN 1: HOME DASHBOARD ==================== -->
-      <div class="screen-container active" id="screen-home">
-        <!-- App Header -->
-        <div class="app-header">
-          <div class="app-brand-left">
-            <div class="brand-box">🌿</div>
-            <div class="brand-name">FloraScan</div>
-          </div>
-          <div class="app-actions-right">
-            <div class="notif-bell" onclick="showToast('🔔 2 Treatment reminders due today')">
-              <span>🔔</span>
-              <div class="notif-dot"></div>
-            </div>
-            <div class="user-avatar" title="Dr. Elena Carter"></div>
-          </div>
+        <div class="sidebar-item" id="slink-scan" onclick="switchViewScreen('scan')">
+          <span class="sidebar-icon">📷</span>
+          <span>AI Vision Scan</span>
+          <span class="sidebar-badge">Live</span>
+        </div>
+        <div class="sidebar-item" id="slink-garden" onclick="switchViewScreen('garden')">
+          <span class="sidebar-icon">🪴</span>
+          <span>My Garden</span>
+          <span class="sidebar-badge" id="gardenCountBadge">0</span>
+        </div>
+        <div class="sidebar-item" id="slink-library" onclick="switchViewScreen('library')">
+          <span class="sidebar-icon">📚</span>
+          <span>Plant Library</span>
+          <span class="sidebar-badge" id="libraryCountBadge">187</span>
+        </div>
+        <div class="sidebar-item" id="slink-agronomist" onclick="openAgronomistChat()">
+          <span class="sidebar-icon">👨‍🌾</span>
+          <span>Agronomist AI</span>
         </div>
 
-        <!-- Greeting & Live Sync -->
-        <div class="greeting-pill-row">
-          <div class="greeting-text">
-            <span>🌱</span> GOOD MORNING, BOTANIST!
+        <div class="backend-status-card" id="sidebarBackendStatus">
+          <div class="status-row">
+            <span class="pulse-dot-sm" id="backendDot"></span>
+            <span id="backendStatusText">Checking Backend...</span>
           </div>
-          <div class="live-sync-badge">
-            <div class="pulse-dot"></div> Live Sync
+          <div style="color: var(--text-muted); font-size: 10px;" id="backendSubText">
+            http://localhost:8000
           </div>
         </div>
+      </aside>
 
-        <h1 class="hero-title">
-          Your Fields Are <span class="thriving">Thriving</span>
-        </h1>
-        <div class="location-sub">
-          <span>📍</span> Green Valley Farm • Plot 4B (Sunny 24°C)
-        </div>
+      <!-- Main Viewport Container -->
+      <main class="main-viewport" id="mainViewport">
 
-        <!-- Hero Drone Telemetry Card -->
-        <div class="drone-hero-card">
-          <div class="drone-badge-top">
-            <div class="drone-pill">
-              <span class="pulse-dot"></span> AI Drone Telemetry Active
-            </div>
-            <div class="drone-pill">🛰️ Spectral HD</div>
-          </div>
-          <div class="drone-card-bottom">
+        <!-- ==================== SCREEN 1: DASHBOARD ==================== -->
+        <div class="screen-container active" id="screen-home">
+          <div class="dash-header">
             <div>
-              <div class="scan-status-label">Terrace Scan Status</div>
-              <div class="scan-status-val">42 Acres Monitored</div>
-            </div>
-            <div class="health-index-pill">
-              <span>✓</span> 92.4% Health Index
-            </div>
-          </div>
-        </div>
-
-        <!-- Overall Crop Vitality Dark Card -->
-        <div class="vitality-card">
-          <div class="vitality-header">
-            <div class="vitality-title">
-              <span>📈</span> Overall Crop Vitality
-            </div>
-            <div class="batch-badge">Batch 2026.4</div>
-          </div>
-
-          <div class="vitality-content">
-            <div class="circular-gauge">
-              <svg class="gauge-svg" viewBox="0 0 80 80">
-                <circle class="gauge-bg" cx="40" cy="40" r="34"></circle>
-                <circle class="gauge-progress" cx="40" cy="40" r="34"></circle>
-              </svg>
-              <div class="gauge-inner">
-                <div class="gauge-val">92%</div>
-                <div class="gauge-sub">VIGOUR</div>
+              <div class="dash-greeting-label">
+                <span>🌱</span> Botanical Telemetry Online
               </div>
+              <h1 class="dash-hero-title">Keep Your Flora <span class="thriving">Thriving</span></h1>
             </div>
-
-            <div class="vitality-metrics">
-              <div class="metric-row">
-                <span class="metric-name">🐛 Pest Pressure</span>
-                <span class="metric-val" style="color: #4ADE80;">Low (4%)</span>
-              </div>
-              <div class="metric-row">
-                <span class="metric-name">💧 Soil Moisture</span>
-                <span class="metric-val">68% (Ideal)</span>
-              </div>
-              <div class="metric-row">
-                <span class="metric-name">🛸 Drone Pass</span>
-                <span class="metric-val">2h ago</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Monitored Plots / Plants Section -->
-        <div class="section-header-row">
-          <div class="section-main-heading">Monitored Plots & Plants</div>
-          <div class="section-action-link" onclick="goToScreen('history')">Manage All &gt;</div>
-        </div>
-
-        <!-- Plot Item 1: Golden Wheat -->
-        <div class="plot-card" onclick="goToScreen('scan')">
-          <div class="plot-thumb" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&auto=format&fit=crop');"></div>
-          <div class="plot-info">
-            <div class="plot-name-row">
-              <div class="plot-title">Golden Wheat</div>
-              <span class="health-badge good">96% Health</span>
-            </div>
-            <div class="plot-details">Field A • 15 Hectares • Tillering</div>
-            <div class="plot-status-tag status-good">
-              <span>✓</span> No Pathogen Detected
-            </div>
-          </div>
-        </div>
-
-        <!-- Plot Item 2: Organic Tomato (With Active Early Blight Alert) -->
-        <div class="plot-card" onclick="openDiagnosis('tomato')" style="border-left: 4px solid var(--alert-red);">
-          <div class="plot-thumb" style="background-image: url('https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=200&auto=format&fit=crop');"></div>
-          <div class="plot-info">
-            <div class="plot-name-row">
-              <div class="plot-title">Organic Tomato</div>
-              <span class="health-badge alert">88% Action</span>
-            </div>
-            <div class="plot-details">Greenhouse B • Bed 3 • Fruiting</div>
-            <div class="plot-status-tag status-alert">
-              <span>⚠️</span> Mild Early Blight Suspicion (Click to Inspect)
-            </div>
-          </div>
-        </div>
-
-        <!-- Plot Item 3: Sweet Maize -->
-        <div class="plot-card" onclick="openDiagnosis('maize')">
-          <div class="plot-thumb" style="background-image: url('https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=200&auto=format&fit=crop');"></div>
-          <div class="plot-info">
-            <div class="plot-name-row">
-              <div class="plot-title">Sweet Maize</div>
-              <span class="health-badge good">94% Health</span>
-            </div>
-            <div class="plot-details">North Sector • Plot 2 • Tasseling</div>
-            <div class="plot-status-tag status-good">
-              <span>✓</span> Optimal Growth Rate
-            </div>
-          </div>
-        </div>
-
-        <!-- Plot Item 4: Monstera Deliciosa (Houseplant) -->
-        <div class="plot-card" onclick="openDiagnosis('monstera')">
-          <div class="plot-thumb" style="background-image: url('https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=200&auto=format&fit=crop');"></div>
-          <div class="plot-info">
-            <div class="plot-name-row">
-              <div class="plot-title">Monstera Deliciosa</div>
-              <span class="health-badge good">95% Health</span>
-            </div>
-            <div class="plot-details">Living Room • Indoor Terrarium</div>
-            <div class="plot-status-tag status-good">
-              <span>✓</span> Hydrated & Sprouting Fenestration
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ==================== SCREEN 2: SCANNER & DETECTION ==================== -->
-      <div class="screen-container" id="screen-scan">
-        <!-- Viewfinder Card -->
-        <div class="scanner-viewfinder">
-          <img id="scannerImgFeed" class="scanner-feed-img" src="https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&auto=format&fit=crop" alt="Leaf Scanner Feed">
-
-          <!-- Viewfinder UI Overlay -->
-          <div class="scanner-overlay">
-            <div class="scanner-hud-top">
-              <button class="hud-btn" onclick="toggleFlash()">⚡</button>
-              <div class="crop-selector-pill">
-                <span>🍅</span>
-                <span id="currentCropLabel">Tomato • GH-B (Organic)</span>
-                <span>▾</span>
-              </div>
-              <button class="hud-btn" onclick="toggleViewfinderTarget()">🎯</button>
-            </div>
-
-            <div class="target-status-bar">
-              <div class="pulse-dot"></div>
-              <span>Direct Daylight • Distance 6.2 in • 100% Locked</span>
-            </div>
-
-            <!-- Central Scanning Reticle -->
-            <div class="scanner-reticle-box">
-              <div class="reticle-corner c-top-left"></div>
-              <div class="reticle-corner c-top-right"></div>
-              <div class="reticle-corner c-bot-left"></div>
-              <div class="reticle-corner c-bot-right"></div>
-              <div class="laser-scan-line"></div>
-
-              <!-- AI Detection Pill -->
-              <div class="ai-detected-pill" id="liveDetectionTag">
-                <span>✓</span> Alternaria solani • Early Blight 94.2% Conf.
-              </div>
-            </div>
-
-            <!-- Bottom Target Selector Mode -->
-            <div style="display: flex; justify-content: center; gap: 8px; font-size: 11px; font-weight: 700; color: #FFFFFF;">
-              <span style="opacity: 0.6;">Whole Stem</span>
-              <span style="color: var(--accent-bright); text-decoration: underline;">Single Leaf</span>
-              <span style="opacity: 0.6;">Soil & Root</span>
-              <span style="opacity: 0.6;">Multi-Plot</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Spectral Filter Toggles -->
-        <div class="spectral-modes-row">
-          <button class="mode-tab active" onclick="setFilterMode('natural', this)">RGB Natural</button>
-          <button class="mode-tab" onclick="setFilterMode('ndvi', this)">NDVI Sim</button>
-          <button class="mode-tab" onclick="setFilterMode('thermal', this)">Thermal Stress</button>
-        </div>
-
-        <!-- Shutter & Controls -->
-        <div class="camera-shutter-row">
-          <!-- Gallery Upload Button -->
-          <label class="cam-sub-btn" style="cursor: pointer;">
-            <input type="file" accept="image/*" style="display: none;" onchange="handleUserPhotoUpload(event)">
-            <div class="cam-sub-icon">🖼️</div>
-            <span>Gallery</span>
-          </label>
-
-          <!-- Central Shutter Button -->
-          <button class="shutter-leaf-btn" onclick="triggerScanDiagnosis()" title="Run AI Plant Diagnosis">
-            <span>🌿</span>
-          </button>
-
-          <!-- Auto AI Toggle -->
-          <div class="cam-sub-btn" onclick="toggleAutoAI()">
-            <div class="cam-sub-icon" id="autoAiIcon" style="color: var(--accent-emerald);">✨</div>
-            <span>Auto AI</span>
-          </div>
-        </div>
-
-        <!-- Sample Specimen Switcher (Easy testing for demonstration) -->
-        <div class="specimen-bar">
-          <div class="specimen-label">🧪 Load Test Specimen (Or Upload Your Own)</div>
-          <div class="specimen-pills">
-            <button class="specimen-pill active" onclick="loadSpecimen('early_blight', this)">
-              🍅 Tomato (Early Blight)
-            </button>
-            <button class="specimen-pill" onclick="loadSpecimen('powdery_mildew', this)">
-              🌸 Rose (Powdery Mildew)
-            </button>
-            <button class="specimen-pill" onclick="loadSpecimen('yellowing_leaf', this)">
-              🪴 Monstera (Yellowing Halo)
-            </button>
-            <button class="specimen-pill" onclick="loadSpecimen('healthy_wheat', this)">
-              🌾 Healthy Wheat
+            <button class="btn-emerald" onclick="switchViewScreen('scan')">
+              <span>📷</span> Scan a Leaf
             </button>
           </div>
-        </div>
-      </div>
 
-      <!-- ==================== SCREEN 3: SMART DIAGNOSIS & LAB REPORT ==================== -->
-      <div class="screen-container" id="screen-diagnosis">
-        <!-- Top Navigation -->
-        <div class="diag-top-nav">
-          <button class="hud-btn" onclick="goToScreen('home')" style="background: #FFFFFF; color: #111; border: 1px solid var(--border);">←</button>
-          <div class="diag-confidence-pill">
-            <div class="pulse-dot"></div>
-            <span id="diagConfidenceHeader">VERIFIED 94.2% AI CONFIDENCE</span>
-          </div>
-          <div style="display: flex; gap: 6px;">
-            <button class="hud-btn" onclick="showToast('🔖 Saved to plant health journal')" style="background: #FFFFFF; color: #111; border: 1px solid var(--border);">🔖</button>
-            <button class="hud-btn" onclick="shareDossier()" style="background: #FFFFFF; color: #111; border: 1px solid var(--border);">↗️</button>
-          </div>
-        </div>
-
-        <!-- Breadcrumb -->
-        <div class="diag-breadcrumb" id="diagBreadcrumbs">
-          <span>Organic Tomato</span> • <span>Greenhouse B (Plot 4B)</span> • <span>#AB-8942</span>
-        </div>
-
-        <div class="desktop-two-col">
-          <!-- Left Column -->
-          <div>
-            <!-- Hero Pathology Card -->
-            <div class="pathology-hero-card">
-              <div class="pathology-img-container" id="diagHeroImage" style="background-image: url('https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&auto=format&fit=crop');">
-                <div class="stage-badge-top" id="diagStageBadge">
-                  <span>⚠️</span> STAGE 2: MODERATE SEVERITY
-                </div>
-                <div class="spectral-tag-top">Spectral 4K</div>
-
-                <div class="pathology-target-box">
-                  <div class="target-tag">Target: 96%</div>
-                </div>
+          <!-- Overall Crop Vitality Dark Card -->
+          <div class="vitality-hero-card">
+            <div class="vitality-card-header">
+              <div class="vitality-card-title">
+                <span>⚡</span> Garden Phytosanitary Index
               </div>
-
-              <div class="pathology-info-content">
-                <div class="pathology-sub-id" id="diagFamilyId">PATHOLOGICAL ID • Solanaceae Family</div>
-                <div class="pathology-disease-title" id="diagDiseaseTitle">Early Blight</div>
-                <div class="pathology-scientific" id="diagScientific">Alternaria solani [Sorauer]</div>
-
-                <div class="pathology-meta-grid">
-                  <div>
-                    <div class="meta-col-title">Classification</div>
-                    <div class="meta-col-val" id="diagClassification">Ascomycete (Fungal)</div>
-                  </div>
-                  <div>
-                    <div class="meta-col-title">Timestamp</div>
-                    <div class="meta-col-val">Today 09:14 Live</div>
-                  </div>
-                  <div>
-                    <div class="meta-col-title">Microclimate</div>
-                    <div class="meta-col-val" id="diagMicroclimate">78% RH • 26.5°C</div>
-                  </div>
-                </div>
+              <div style="font-size: 11px; background: rgba(34, 197, 94, 0.18); color: #A7F3D0; padding: 4px 10px; border-radius: 8px; font-weight: 700;">
+                All Systems Optimal
               </div>
             </div>
-
-            <!-- Severity Risk Matrix Card -->
-            <div class="severity-matrix-card">
-              <div class="severity-matrix-header">
-                <div class="matrix-title">Severity Risk Matrix</div>
-                <div class="matrix-plot-tag">Plot 4B Dynamics</div>
-              </div>
-
-              <div class="severity-body">
-                <div class="severity-score-left">
-                  <div class="alert-pill-text" id="diagAlertLevel">
-                    <span>●</span> HIGH ALERT
-                  </div>
-                  <div class="score-number" id="diagScoreNumber">
-                    64 <span>/ 100</span>
-                  </div>
-                  <div class="severity-desc" id="diagSeveritySummary">
-                    Accelerating tissue loss; containment priority high before foliar defoliation starts.
-                  </div>
+            <div class="vitality-inner-grid">
+              <div class="circular-gauge-box">
+                <svg class="gauge-svg" viewBox="0 0 80 80">
+                  <circle class="gauge-bg" cx="40" cy="40" r="34"></circle>
+                  <circle class="gauge-progress" cx="40" cy="40" r="34"></circle>
+                </svg>
+                <div class="gauge-inner-text">
+                  <div class="gauge-score">92</div>
+                  <div class="gauge-sub-lbl">Vigour</div>
                 </div>
-
-                <div class="circular-gauge" style="width: 78px; height: 78px;">
-                  <svg class="gauge-svg" viewBox="0 0 80 80">
-                    <circle class="gauge-bg" cx="40" cy="40" r="34"></circle>
-                    <circle class="gauge-progress" id="diagGaugeSvg" cx="40" cy="40" r="34" style="stroke: var(--alert-red); stroke-dashoffset: 75;"></circle>
-                  </svg>
-                  <div class="gauge-inner">
-                    <div class="gauge-sub" style="font-size: 11px; font-weight: 900; color: var(--text-main);">INDEX</div>
-                  </div>
+              </div>
+              <div class="vitality-stats-grid">
+                <div class="vitality-stat-pill">
+                  <div class="vitality-stat-num" id="dashTotalPlants">0</div>
+                  <div class="vitality-stat-name">Saved Plants</div>
+                </div>
+                <div class="vitality-stat-pill">
+                  <div class="vitality-stat-num" id="dashDueWater">0</div>
+                  <div class="vitality-stat-name">Needs Water</div>
+                </div>
+                <div class="vitality-stat-pill">
+                  <div class="vitality-stat-num">187</div>
+                  <div class="vitality-stat-name">Database Species</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Right Column -->
-          <div>
-            <!-- Progression Wave (Timeline from Screenshot) -->
-            <div class="progression-card">
-              <div class="progression-header">
-                <div class="progression-title-grp">
-                  <span>🌊</span>
-                  <div class="progression-title">Progression Wave</div>
+          <!-- Scan CTA Banner -->
+          <div class="scan-cta-banner">
+            <div class="scan-cta-text">
+              <h3>Real-Time Phytosanitary AI Diagnosis</h3>
+              <p>Upload a leaf or tree photo to detect fungal pathogens, chlorosis, and nutrient deficiencies powered by Google Gemini Vision.</p>
+            </div>
+            <button class="btn-emerald" onclick="switchViewScreen('scan')">
+              <span>🔬</span> Identify Now
+            </button>
+          </div>
+
+          <!-- Upcoming Care Tasks -->
+          <div class="section-title-row">
+            <h2 class="section-heading">Today's Care Reminders</h2>
+            <span class="section-link" onclick="switchViewScreen('garden')">View All Garden →</span>
+          </div>
+
+          <div class="task-card-list" id="dashTaskCards">
+            <!-- Rendered Dynamically from My Garden -->
+          </div>
+        </div>
+
+        <!-- ==================== SCREEN 2: SCANNER & DETECTION ==================== -->
+        <div class="screen-container" id="screen-scan">
+          <div class="scanner-layout-grid">
+            <!-- Left: Viewfinder & HUD -->
+            <div class="viewfinder-card" id="dropArea">
+              <img id="scannerImgFeed" class="viewfinder-img" src="https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&auto=format&fit=crop" alt="Leaf Scanner">
+
+              <div class="viewfinder-hud">
+                <div class="hud-top-bar hud-interactive">
+                  <div class="hud-pill">
+                    <span class="pulse-dot-sm"></span>
+                    <span id="scannerHudCrop">Ready for Scan</span>
+                  </div>
+                  <button class="hud-icon-btn" onclick="toggleSpectralFilter()" title="Toggle Filter">
+                    🛰️
+                  </button>
                 </div>
-                <div class="progression-tag" id="diagPhaseTag">Active Phase 2</div>
+
+                <!-- Central Reticle & Scanning Laser -->
+                <div class="scanner-reticle">
+                  <div class="reticle-corner c-tl"></div>
+                  <div class="reticle-corner c-tr"></div>
+                  <div class="reticle-corner c-bl"></div>
+                  <div class="reticle-corner c-br"></div>
+                  <div class="laser-line"></div>
+                  <div class="scanner-detection-pill" id="liveReticlePill">
+                    🌿 Focus on leaf or foliage
+                  </div>
+                </div>
+
+                <div class="hud-interactive" style="display: flex; justify-content: center; gap: 8px;">
+                  <span class="hud-pill" style="font-size: 11px;">Gemini Vision Active</span>
+                </div>
               </div>
 
-              <div class="timeline-steps">
-                <!-- Phase 1 -->
-                <div class="timeline-item">
-                  <div class="timeline-dot resolved">✓</div>
-                  <div class="timeline-content">
-                    <div class="timeline-top-line">
-                      <div class="timeline-step-name">Day 1–3: Spore Germination</div>
-                      <span class="timeline-status-badge resolved-badge">Resolved</span>
-                    </div>
-                    <div class="timeline-desc">Microscopic stomatal penetration during warm wet night cycle.</div>
-                  </div>
-                </div>
-
-                <!-- Phase 2 (Active) -->
-                <div class="timeline-item">
-                  <div class="timeline-dot active">🎯</div>
-                  <div class="timeline-content">
-                    <div class="timeline-top-line">
-                      <div class="timeline-step-name" style="color: var(--alert-red);">Day 4–7: Bullseye Target Spots</div>
-                      <span class="timeline-status-badge active-badge">Active</span>
-                    </div>
-                    <div class="timeline-desc">Concentric ring necrosis with intense yellow chloroplast halo. High spore production underway.</div>
-                  </div>
-                </div>
-
-                <!-- Phase 3 -->
-                <div class="timeline-item">
-                  <div class="timeline-dot pending">⏳</div>
-                  <div class="timeline-content">
-                    <div class="timeline-top-line">
-                      <div class="timeline-step-name">Day 8–12: Foliar Blight & Defoliation</div>
-                      <span class="timeline-status-badge resolved-badge">Predicted in 48h</span>
-                    </div>
-                    <div class="timeline-desc">Complete leaflet yellowing, desiccation, and premature drop causing sun scald risk.</div>
-                  </div>
-                </div>
-
-                <!-- Phase 4 -->
-                <div class="timeline-item">
-                  <div class="timeline-dot pending">🛡️</div>
-                  <div class="timeline-content">
-                    <div class="timeline-top-line">
-                      <div class="timeline-step-name">Day 14+: Stem Collar & Fruit Rot</div>
-                      <span class="timeline-status-badge resolved-badge" style="color: var(--accent-emerald);">Preventable with Rx</span>
-                    </div>
-                    <div class="timeline-desc">Direct calyx infection and sunken leathery rot on green/ripening tomatoes.</div>
-                  </div>
-                </div>
+              <!-- Loading Overlay -->
+              <div class="scanner-loading-overlay" id="scannerLoadingOverlay">
+                <div class="scanner-spinner"></div>
+                <h3 style="font-size: 16px; font-weight: 800;">Sending to Gemini Vision AI...</h3>
+                <p style="font-size: 12px; color: #A7F3D0; margin-top: 4px;" id="loadingStatusText">Extracting botanical features & analyzing leaf pathology</p>
               </div>
             </div>
 
-            <!-- Etiology & Vectors Card -->
-            <div class="etiology-card">
-              <div class="etiology-title">
-                <span>🔬</span> Etiology & Vectors
+            <!-- Right: Controls & Demo Specimens -->
+            <div class="scanner-controls-panel">
+              <!-- Drag and Drop Zone -->
+              <div class="drag-drop-zone" onclick="document.getElementById('leafFileInput').click()">
+                <div class="drag-drop-icon">📸</div>
+                <div class="drag-drop-text">Click to Upload or Drag & Drop Leaf Photo</div>
+                <div class="drag-drop-sub">Supports JPEG, PNG, WEBP (Max 15MB) • Auto-compressed to 1024px</div>
+                <input type="file" id="leafFileInput" accept="image/*" style="display: none;" onchange="handleRealPhotoSelected(event)">
               </div>
 
-              <div class="vector-item">
-                <div class="vector-label">
-                  <span>💧</span> Primary Inoculum Trigger
-                </div>
-                <div class="vector-desc">
-                  Overhead drip splash and persistent leaf wetness &gt; 4.5 hours in poorly ventilated canopy rows.
-                </div>
+              <div class="scanner-action-buttons">
+                <button class="btn-action-primary" onclick="triggerAnalyzeFromCurrentFeed()">
+                  <span>🧠</span> Run AI Diagnosis
+                </button>
+                <button class="btn-action-primary" style="background: #FFFFFF; color: var(--surface-dark);" onclick="document.getElementById('leafFileInput').click()">
+                  <span>🖼️</span> Pick New Photo
+                </button>
               </div>
 
-              <div class="vector-item">
-                <div class="vector-label">
-                  <span>🌡️</span> Thermal Optimum
+              <!-- Demo Specimens (Clearly Labeled as Demo Samples, Never Fallback for Uploads) -->
+              <div class="demo-specimens-card">
+                <div class="demo-specimen-label">
+                  <span>🧪 Demo Samples (Offline Previews)</span>
+                  <span class="demo-pill-badge">Reference Only</span>
                 </div>
-                <div class="vector-desc">
-                  Conidiophores sporulate rapidly between 24°C and 29°C with alternating wet-dry microcycles.
-                </div>
-              </div>
-
-              <div class="vector-item">
-                <div class="vector-label">
-                  <span>🎯</span> Distinctive Diagnostic Marker
-                </div>
-                <div class="vector-desc">
-                  Alternaria acid secretion creates toxic dark concentric rings with an outer golden-yellow chloroplast halo.
+                <div class="demo-specimen-grid">
+                  <button class="demo-pill-btn" onclick="loadDemoSpecimen('tomato')">
+                    <span>🍅</span>
+                    <div>
+                      <div>Tomato Leaf</div>
+                      <div style="font-size: 10px; color: var(--text-muted);">Early Blight</div>
+                    </div>
+                  </button>
+                  <button class="demo-pill-btn" onclick="loadDemoSpecimen('rose')">
+                    <span>🌹</span>
+                    <div>
+                      <div>Rose Bush</div>
+                      <div style="font-size: 10px; color: var(--text-muted);">Powdery Mildew</div>
+                    </div>
+                  </button>
+                  <button class="demo-pill-btn" onclick="loadDemoSpecimen('monstera')">
+                    <span>🪴</span>
+                    <div>
+                      <div>Monstera</div>
+                      <div style="font-size: 10px; color: var(--text-muted);">Overwatering</div>
+                    </div>
+                  </button>
+                  <button class="demo-pill-btn" onclick="loadDemoSpecimen('wheat')">
+                    <span>🌾</span>
+                    <div>
+                      <div>Golden Wheat</div>
+                      <div style="font-size: 10px; color: var(--accent-emerald);">Pristine Vigour</div>
+                    </div>
+                  </button>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Prescription & Spray Plan Action Card -->
-            <div class="prescription-banner" onclick="goToScreen('treatment')">
+        <!-- ==================== SCREEN 3: DIAGNOSIS & LAB REPORT ==================== -->
+        <div class="screen-container" id="screen-diagnosis">
+          <div class="diag-report-wrapper">
+            <div class="diag-top-nav-bar">
+              <button class="view-btn" onclick="switchViewScreen('scan')">
+                ← Back to Scanner
+              </button>
+              <div class="diag-confidence-tag" id="diagConfidenceTag">
+                <span class="pulse-dot-sm"></span>
+                <span id="diagConfidenceVal">94% AI CONFIDENCE</span>
+              </div>
+            </div>
+
+            <!-- Warning / Alert Banners -->
+            <div id="diagNonPlantBanner" class="status-banner banner-not-plant" style="display: none;">
+              <span style="font-size: 24px;">⚠️</span>
               <div>
-                <div class="presc-title">Prescription & Spray Plan</div>
-                <div class="presc-sub">Organic OMRI-listed fungicides ready →</div>
+                <strong>Non-Plant Subject Detected:</strong>
+                <div id="diagNonPlantText">The uploaded image does not appear to be a plant. Please provide a clear close-up photo of plant leaves or foliage.</div>
               </div>
-              <div class="presc-btn-circle">→</div>
             </div>
 
-            <!-- Secondary Actions -->
-            <div class="secondary-action-row">
-              <button class="action-sub-btn" onclick="openAgronomistChat()">
-                <span>👨‍🌾</span> Ask Agronomist
-              </button>
-              <button class="action-sub-btn" onclick="exportDossier()">
-                <span>📄</span> Export Dossier
-              </button>
+            <div id="diagLowConfidenceBanner" class="status-banner banner-low-confidence" style="display: none;">
+              <span style="font-size: 24px;">❓</span>
+              <div>
+                <strong>Not Sure — Low Confidence Match (&lt;60%):</strong>
+                <div id="diagLowConfidenceText">Here are closest candidates. For best diagnosis, capture a closer leaf shot under bright indirect daylight.</div>
+                <div id="diagAlternativesList" style="display: flex; gap: 8px; margin-top: 6px;"></div>
+              </div>
+            </div>
+
+            <div id="diagHealthyBanner" class="status-banner banner-healthy" style="display: none;">
+              <span style="font-size: 24px;">🎉</span>
+              <div>
+                <strong>Pristine Plant Health:</strong>
+                <div>No active fungal pathogens, bacterial leaf spots, or pest vectors detected. Your plant looks vibrant and well-hydrated!</div>
+              </div>
+            </div>
+
+            <!-- PRIMARY IDENTITY: Plant Common Name + Scientific Name + Confidence FIRST -->
+            <div class="plant-identity-header-card">
+              <div class="plant-identity-left">
+                <div class="plant-avatar-icon" id="diagPlantAvatar">🌿</div>
+                <div class="plant-identity-titles">
+                  <h2 id="diagCommonName">Tomato</h2>
+                  <div class="plant-scientific-name" id="diagScientificName">Solanum lycopersicum</div>
+                  <div class="plant-badges-row">
+                    <span class="badge-pill badge-family" id="diagFamilyTag">Solanaceae Family</span>
+                    <span class="badge-pill" id="diagTypeTag" style="background: #EEF2FF; color: #4338CA;">Crop</span>
+                    <span class="badge-pill badge-verified-db" id="diagDbMatchBadge">✓ Verified Botany DB Match</span>
+                  </div>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <button class="btn-emerald" id="btnAddToGardenFromDiag" onclick="addCurrentDiagnosisToGarden()">
+                  <span>+</span> Add to My Garden
+                </button>
+              </div>
+            </div>
+
+            <!-- Two-Column Disease and Treatment Details -->
+            <div class="diag-details-grid" id="diagDiseaseDetailsSection">
+              <!-- Left: Disease Pathology & Severity -->
+              <div class="disease-specimen-card">
+                <div class="disease-header-badge" id="diagHealthStatusHeader">
+                  <span>●</span> DISEASE IDENTIFIED
+                </div>
+                <h3 class="disease-title-main" id="diagDiseaseName">Early Blight</h3>
+                <div style="font-size: 12px; color: #94A3B8; margin-top: 2px;" id="diagDiseaseConfidence">92% Pathogen Certainty</div>
+
+                <!-- Severity Gauge -->
+                <div class="disease-severity-meter-row">
+                  <div>
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #94A3B8;">Severity Score</div>
+                    <div style="font-size: 26px; font-weight: 900; color: var(--alert-red);" id="diagSeverityScore">62 / 100</div>
+                  </div>
+                  <div style="font-size: 12px; color: #E2E8F0; max-width: 200px; text-align: right;" id="diagSeveritySummary">
+                    Tissue damage detected. Immediate foliar intervention recommended.
+                  </div>
+                </div>
+
+                <!-- Visible Symptoms -->
+                <div style="margin-top: 18px;">
+                  <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #A7F3D0; margin-bottom: 8px;">
+                    Visible Symptoms
+                  </div>
+                  <div class="symptoms-chip-list" id="diagSymptomsList">
+                    <!-- Populated via JS -->
+                  </div>
+                </div>
+
+                <!-- Likely Causes -->
+                <div style="margin-top: 18px;">
+                  <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #A7F3D0; margin-bottom: 8px;">
+                    Likely Causes
+                  </div>
+                  <div class="symptoms-chip-list" id="diagCausesList">
+                    <!-- Populated via JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Step-by-Step Treatment & Prevention -->
+              <div class="rx-treatment-card">
+                <div class="rx-header-row">
+                  <span style="font-size: 20px;">💊</span>
+                  <h3 class="rx-title">Actionable Treatment Plan</h3>
+                </div>
+                <div class="step-list" id="diagTreatmentList">
+                  <!-- Populated via JS -->
+                </div>
+
+                <div class="rx-header-row" style="margin-top: 22px;">
+                  <span style="font-size: 20px;">🛡️</span>
+                  <h3 class="rx-title">Prevention Guidelines</h3>
+                </div>
+                <div class="step-list" id="diagPreventionList">
+                  <!-- Populated via JS -->
+                </div>
+
+                <!-- Agronomist AI Consultation Shortcut -->
+                <div class="agronomist-cta-card">
+                  <div class="agronomist-avatar-grp">
+                    <div class="agronomist-avatar">👨‍🌾</div>
+                    <div>
+                      <div style="font-size: 13px; font-weight: 800; color: #064E3B;">Need Custom Advice?</div>
+                      <div style="font-size: 11px; color: #047857;">Chat with Dr. Elena Carter (Agronomist AI)</div>
+                    </div>
+                  </div>
+                  <button class="btn-emerald" style="padding: 8px 14px; font-size: 12px;" onclick="openAgronomistChat()">
+                    Ask AI
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Verified Database Plant Care Info (When matched) -->
+            <div id="diagDbCareCard" class="rx-treatment-card" style="display: none;">
+              <div class="rx-header-row">
+                <span style="font-size: 20px;">📖</span>
+                <h3 class="rx-title">Verified Species Care Profile (PLOW Database)</h3>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; font-size: 13px;" id="diagDbCareGrid">
+                <!-- Injected dynamically -->
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- ==================== SCREEN 4: TREATMENT & PREVENTION GUIDE ==================== -->
-      <div class="screen-container" id="screen-treatment">
-        <!-- Header -->
-        <div class="app-header">
-          <div class="app-brand-left">
-            <button class="hud-btn" onclick="goToScreen('diagnosis')" style="background: #FFFFFF; color: #111; border: 1px solid var(--border); margin-right: 8px;">←</button>
-            <div class="brand-name">Treatment & Care Plan</div>
-          </div>
-          <span class="health-badge alert">Urgent Priority</span>
-        </div>
-
-        <!-- Treatment Step 1 -->
-        <div class="treatment-card">
-          <span class="step-badge">STEP 1 • PHYSICAL CONTAINMENT</span>
-          <h3 class="treatment-h3">Prune Infected Lower Leaves</h3>
-          <p class="treatment-p">
-            Using sterilized shears (70% isopropyl alcohol), clip all foliage exhibiting concentric bullseye spots or chlorotic yellow halos. Place clippings directly into a sealed bag to prevent airborne spore drift.
-          </p>
-          <button class="action-sub-btn" style="background: var(--bg);" onclick="showToast('✂️ Pruning logged in plant care journal')">
-            <span>✓</span> Mark Pruning Completed
-          </button>
-        </div>
-
-        <!-- Treatment Step 2 -->
-        <div class="treatment-card">
-          <span class="step-badge">STEP 2 • SPRAY PRESCRIPTION</span>
-          <h3 class="treatment-h3">Apply Liquid Copper Fungicide</h3>
-          <p class="treatment-p">
-            Spray organic OMRI-listed Liquid Copper Octanoate or Bacillus subtilis spray in late evening to avoid leaf burn. Thoroughly coat both the upper and lower leaf surfaces.
-          </p>
-          <div style="background: var(--bg); padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; font-size: 12px;">
-            <strong>Dosage:</strong> 2 fl oz (4 tbsp) per gallon of water. Repeat every 7 days until clear.
-          </div>
-          <button class="btn-done" style="width: 100%; justify-content: center;" onclick="addTreatmentReminder()">
-            <span>⏰</span> Set 7-Day Spray Reminder in PLOW
-          </button>
-        </div>
-
-        <!-- Prevention & Environmental Controls (Lab Experiment 9 / Tips) -->
-        <div class="treatment-card">
-          <span class="step-badge" style="background: rgba(56, 189, 248, 0.15); color: #0284C7;">PREVENTION GUIDE</span>
-          <h3 class="treatment-h3">Environmental & Cultural Care Rules</h3>
-          
-          <div class="care-specs-grid">
-            <div class="spec-item">
-              <div class="spec-name">💧 Watering Strategy</div>
-              <div class="spec-val">Basal Drip Only</div>
-            </div>
-            <div class="spec-item">
-              <div class="spec-name">☀️ Sunlight & Drying</div>
-              <div class="spec-val">6+ hrs Direct Light</div>
-            </div>
-            <div class="spec-item">
-              <div class="spec-name">💨 Airflow Clearance</div>
-              <div class="spec-val">24 in Between Plants</div>
-            </div>
-            <div class="spec-item">
-              <div class="spec-name">🌱 Soil Surface Mulch</div>
-              <div class="spec-val">2 in Organic Straw</div>
+        <!-- ==================== SCREEN 4: PLANT LIBRARY (187 Species) ==================== -->
+        <div class="screen-container" id="screen-library">
+          <div class="dash-header">
+            <div>
+              <div class="dash-greeting-label">Botanical Directory</div>
+              <h1 class="dash-hero-title">Plant & Tree <span class="thriving">Library</span></h1>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- ==================== SCREEN 5: HISTORY / JOURNAL ==================== -->
-      <div class="screen-container" id="screen-history">
-        <div class="app-header">
-          <div class="app-brand-left">
-            <div class="brand-name">Scan History & Health Dossiers</div>
+          <!-- Search Bar -->
+          <div class="library-search-bar">
+            <input type="text" id="libSearchInput" class="search-input-field" placeholder="Search by English, Hindi (तुलसी), Telugu, Kannada, or scientific name..." oninput="handleLibrarySearch(this.value)">
+          </div>
+
+          <!-- Filter Pills -->
+          <div class="filter-pills-row" id="libFilterRow">
+            <button class="filter-pill active" onclick="setLibraryTypeFilter('All', this)">All (187)</button>
+            <button class="filter-pill" onclick="setLibraryTypeFilter('houseplant', this)">🪴 Houseplants</button>
+            <button class="filter-pill" onclick="setLibraryTypeFilter('tree', this)">🌳 Trees</button>
+            <button class="filter-pill" onclick="setLibraryTypeFilter('crop', this)">🌾 Crops</button>
+            <button class="filter-pill" onclick="setLibraryTypeFilter('flower', this)">🌸 Flowers</button>
+            <button class="filter-pill" onclick="setLibraryTypeFilter('herb', this)">🌿 Herbs</button>
+          </div>
+
+          <!-- Plant Cards Grid -->
+          <div class="library-grid" id="libPlantGrid">
+            <!-- Rendered via JS -->
           </div>
         </div>
 
-        <div class="plot-card" onclick="openDiagnosis('tomato')">
-          <div class="plot-thumb" style="background-image: url('https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=200&auto=format&fit=crop');"></div>
-          <div class="plot-info">
-            <div class="plot-name-row">
-              <div class="plot-title">Organic Tomato #AB-8942</div>
-              <span class="health-badge alert">Stage 2</span>
+        <!-- ==================== SCREEN 5: MY GARDEN ==================== -->
+        <div class="screen-container" id="screen-garden">
+          <div class="dash-header">
+            <div>
+              <div class="dash-greeting-label">Care Tracker</div>
+              <h1 class="dash-hero-title">My Botanical <span class="thriving">Garden</span></h1>
             </div>
-            <div class="plot-details">Early Blight • 94.2% AI Confidence</div>
-            <div class="plot-status-tag" style="color: var(--text-muted);">Scanned Today at 09:14 AM</div>
+            <button class="btn-emerald" onclick="switchViewScreen('library')">
+              <span>+</span> Add From Library
+            </button>
+          </div>
+
+          <!-- Garden Stats -->
+          <div class="garden-stat-summary">
+            <div class="garden-stat-box">
+              <div class="garden-stat-val" id="gStatTotal">0</div>
+              <div class="garden-stat-lbl">Total Plants</div>
+            </div>
+            <div class="garden-stat-box">
+              <div class="garden-stat-val" style="color: var(--alert-red);" id="gStatUrgent">0</div>
+              <div class="garden-stat-lbl">Due for Water</div>
+            </div>
+            <div class="garden-stat-box">
+              <div class="garden-stat-val" style="color: var(--accent-emerald);" id="gStatHydrated">0</div>
+              <div class="garden-stat-lbl">Hydrated</div>
+            </div>
+          </div>
+
+          <!-- Garden Plants Grid -->
+          <div class="garden-grid" id="myGardenGrid">
+            <!-- Rendered dynamically -->
           </div>
         </div>
-
-        <div class="plot-card" onclick="openDiagnosis('monstera')">
-          <div class="plot-thumb" style="background-image: url('https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=200&auto=format&fit=crop');"></div>
-          <div class="plot-info">
-            <div class="plot-name-row">
-              <div class="plot-title">Monstera Deliciosa #MD-102</div>
-              <span class="health-badge good">Healthy</span>
-            </div>
-            <div class="plot-details">No Pathogens • 98.1% Confidence</div>
-            <div class="plot-status-tag" style="color: var(--text-muted);">Scanned Yesterday at 04:30 PM</div>
-          </div>
-        </div>
-
-        <div class="plot-card" onclick="openDiagnosis('wheat')">
-          <div class="plot-thumb" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&auto=format&fit=crop');"></div>
-          <div class="plot-info">
-            <div class="plot-name-row">
-              <div class="plot-title">Golden Wheat Field A</div>
-              <span class="health-badge good">Optimal</span>
-            </div>
-            <div class="plot-details">Drone Multispectral Pass</div>
-            <div class="plot-status-tag" style="color: var(--text-muted);">Scanned 2 days ago</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Glassmorphic Curved Bottom Navigation Bar (Matches Reference Screenshots) -->
-      <nav class="glass-bottom-bar">
-        <div class="nav-tab-item active" id="navHome" onclick="goToScreen('home')">
-          <div class="nav-tab-icon">🏠</div>
-          <span>Home</span>
-        </div>
-
-        <div class="nav-tab-item" id="navScanTab" onclick="goToScreen('scan')">
-          <div class="nav-tab-icon">📷</div>
-          <span>Scan</span>
-        </div>
-
-        <!-- Center Glowing Leaf Action Button -->
-        <div class="center-leaf-trigger" onclick="goToScreen('scan')" title="Instant Scan Leaf">
-          <span>🌿</span>
-        </div>
-
-        <div class="nav-tab-item" id="navHistory" onclick="goToScreen('history')">
-          <div class="nav-tab-icon">📜</div>
-          <span>History</span>
-        </div>
-
-        <div class="nav-tab-item" id="navProfile" onclick="showToast('👤 Dr. Carter - Licensed Agronomist')">
-          <div class="nav-tab-icon">👤</div>
-          <span>Profile</span>
-        </div>
-      </nav>
+      </main>
     </div>
-  </main>
+  </div>
+
+  <!-- Glass Bottom Nav for Mobile -->
+  <nav class="glass-bottom-nav">
+    <button class="nav-tab-btn active" id="mNavHome" onclick="switchViewScreen('home')">
+      <span class="tab-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-tab-btn" id="mNavGarden" onclick="switchViewScreen('garden')">
+      <span class="tab-icon">🪴</span>
+      <span>Garden</span>
+    </button>
+    <div class="center-leaf-action" onclick="switchViewScreen('scan')" title="Scan Leaf">
+      <span>🌿</span>
+    </div>
+    <button class="nav-tab-btn" id="mNavLibrary" onclick="switchViewScreen('library')">
+      <span class="tab-icon">📚</span>
+      <span>Library</span>
+    </button>
+    <button class="nav-tab-btn" onclick="openAgronomistChat()">
+      <span class="tab-icon">👨‍🌾</span>
+      <span>AI Chat</span>
+    </button>
+  </nav>
 
   <!-- Agronomist AI Modal Chat -->
   <div class="modal-overlay" id="agronomistModal">
-    <div class="modal-inner-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
         <div style="display: flex; gap: 10px; align-items: center;">
           <div class="toolbar-logo">👨‍🌾</div>
           <div>
             <h3 style="font-size: 16px; font-weight: 800;">FloraScan Agronomist AI</h3>
-            <p style="font-size: 11px; color: var(--accent-emerald); font-weight: 700;">● Online • Powered by Botanical ML</p>
+            <p style="font-size: 11px; color: var(--accent-emerald); font-weight: 700;">● Online • Dr. Elena Carter</p>
           </div>
         </div>
-        <span style="font-size: 20px; cursor: pointer;" onclick="closeAgronomistChat()">✕</span>
+        <span style="font-size: 22px; cursor: pointer; color: var(--text-muted);" onclick="closeAgronomistChat()">✕</span>
       </div>
 
-      <div style="background: var(--bg); border-radius: 14px; padding: 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.5;">
-        <strong>Agronomist Analysis:</strong><br>
-        "I've examined the <strong>Early Blight (Alternaria solani)</strong> lesions on your Tomato crop. Because you caught this at Stage 2 before the upper canopy got infected, organic copper spray combined with removing the bottom 3 foliage leaves will halt spore propagation within 72 hours. Avoid overhead hose watering!"
+      <div id="agronomistChatMessages" style="max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; padding-right: 4px;">
+        <div class="chat-bubble ai">
+          Hello! I'm Dr. Elena Carter, your FloraScan agronomist. Ask me any follow-up questions about disease treatments, organic sprays, pruning techniques, or soil care for your plants!
+        </div>
       </div>
 
       <div style="display: flex; gap: 8px;">
-        <input type="text" id="agronomistQuestion" class="form-input" style="flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);" placeholder="Ask follow-up question...">
-        <button class="btn-done" onclick="sendAgronomistQuery()">Send</button>
+        <input type="text" id="agronomistInput" class="search-input-field" placeholder="Ask about treatment, watering, or soil..." onkeydown="if(event.key==='Enter') sendAgronomistMessage()">
+        <button class="btn-emerald" onclick="sendAgronomistMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plant Detail Modal (From Library) -->
+  <div class="modal-overlay" id="plantDetailModal">
+    <div class="modal-card" id="plantDetailModalContent">
+      <!-- Injected via JS -->
+    </div>
+  </div>
+
+  <!-- Settings / API Key Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 17px; font-weight: 800;">⚙️ Gemini API & Backend Configuration</h3>
+        <span style="font-size: 22px; cursor: pointer; color: var(--text-muted);" onclick="closeSettingsModal()">✕</span>
+      </div>
+
+      <div style="font-size: 13px; color: var(--text-sub); line-height: 1.5; margin-bottom: 16px;">
+        FloraScan uses a FastAPI backend proxy to query Google Gemini Vision API (<code style="background: #F1F5F9; padding: 2px 4px; border-radius: 4px;">gemini-2.5-flash</code>). You can configure your key in <code style="background: #F1F5F9; padding: 2px 4px; border-radius: 4px;">backend/.env</code> or enter it below:
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 6px;">Gemini API Key</label>
+        <input type="password" id="geminiApiKeyInput" class="search-input-field" placeholder="AIzaSy..." style="width: 100%;">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button class="view-btn" onclick="closeSettingsModal()">Cancel</button>
+        <button class="btn-emerald" onclick="saveGeminiApiKey()">Save Key</button>
       </div>
     </div>
   </div>
 
   <!-- Toast Notification Pill -->
-  <div class="toast-pill" id="toastPill">
+  <div class="toast-container" id="toastPill">
     <span>🌿</span>
     <span id="toastMsg">Action completed!</span>
   </div>
 
   <script>
-    // Specimen Database (Supports instant scanning & diagnosis)
-    const specimens = {
-      early_blight: {
-        crop: 'Tomato • GH-B (Organic)',
-        name: 'Early Blight',
-        scientific: 'Alternaria solani [Sorauer]',
-        family: 'PATHOLOGICAL ID • Solanaceae Family',
-        classification: 'Ascomycete (Fungal)',
-        confidence: '94.2%',
-        score: 64,
-        stage: 'STAGE 2: MODERATE SEVERITY',
-        alert: 'HIGH ALERT',
-        microclimate: '78% RH • 26.5°C',
-        summary: 'Accelerating tissue loss; containment priority high before foliar defoliation starts.',
-        image: 'https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&auto=format&fit=crop'
+    // Global Application State
+    const API_BASE = 'http://localhost:8000';
+    let plantsDb = [];
+    let diseasesDb = [];
+    let currentDiagnosis = null;
+    let myGarden = [];
+    let activeFilterType = 'All';
+
+    // Built-in Demo Samples (Explicitly marked for offline demo, never fallback)
+    const demoSpecimens = {
+      tomato: {
+        is_plant: true,
+        common_name: "Tomato",
+        scientific_name: "Solanum lycopersicum",
+        family: "Solanaceae",
+        plant_type: "crop",
+        confidence: 94,
+        health_status: "diseased",
+        disease_name: "Early Blight",
+        disease_confidence: 92,
+        symptoms_seen: [
+          "Concentric dark bullseye lesions on lower leaflets",
+          "Yellow chlorotic halos surrounding necrotic spots"
+        ],
+        severity: 62,
+        likely_causes: [
+          "Foliar moisture exceeding 4 hours from overhead watering",
+          "Fungal pathogen Alternaria solani surviving in soil debris",
+          "Warm humid microclimate (24-29°C)"
+        ],
+        treatment_steps: [
+          "Prune and discard infected lower foliage using sanitized shears",
+          "Apply organic copper octanoate or Bacillus subtilis foliar spray",
+          "Transition strictly to drip irrigation at the soil base",
+          "Apply 2 inches of clean straw mulch around stem"
+        ],
+        prevention_tips: [
+          "Space plants 24 inches apart for maximum ventilation",
+          "Rotate solanaceous crops on a 3-year schedule",
+          "Stake vines to keep foliage off moist soil"
+        ],
+        alternatives: [],
+        imageUrl: "https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&auto=format&fit=crop"
       },
-      powdery_mildew: {
-        crop: 'Rose • Garden Bed A',
-        name: 'Powdery Mildew',
-        scientific: 'Podosphaera pannosa',
-        family: 'PATHOLOGICAL ID • Rosaceae Family',
-        classification: 'Erysiphales (Fungal)',
-        confidence: '96.8%',
-        score: 48,
-        stage: 'STAGE 1: EARLY ONSET',
-        alert: 'MODERATE ALERT',
-        microclimate: '65% RH • 22.0°C',
-        summary: 'Superficial white powdery talc mycelium covering upper leaf surfaces. Highly curable with sulfur or neem oil.',
-        image: 'https://images.unsplash.com/photo-1550950158-d0d960dff51b?w=800&auto=format&fit=crop'
+      rose: {
+        is_plant: true,
+        common_name: "Rose",
+        scientific_name: "Rosa rubiginosa",
+        family: "Rosaceae",
+        plant_type: "flower",
+        confidence: 96,
+        health_status: "diseased",
+        disease_name: "Powdery Mildew",
+        disease_confidence: 95,
+        symptoms_seen: [
+          "White powdery talcum-like mycelium on upper leaf surface",
+          "Distorted shoot tips and curling leaflets"
+        ],
+        severity: 48,
+        likely_causes: [
+          "Dry soil coupled with high relative atmospheric humidity",
+          "Poor cross-ventilation in dense rose garden beds"
+        ],
+        treatment_steps: [
+          "Spray cold-pressed neem oil (0.5% solution) early morning",
+          "Apply potassium bicarbonate or wettable sulfur spray",
+          "Prune intersecting inward-growing cane branches"
+        ],
+        prevention_tips: [
+          "Water roots deeply in the morning, avoiding wet foliage at night",
+          "Plant in locations receiving at least 6 hours of direct sun"
+        ],
+        alternatives: [],
+        imageUrl: "https://images.unsplash.com/photo-1550950158-d0d960dff51b?w=800&auto=format&fit=crop"
       },
-      yellowing_leaf: {
-        crop: 'Monstera • Living Room',
-        name: 'Chlorosis & Overwatering Stress',
-        scientific: 'Abiotic Nutrient & Drainage Stress',
-        family: 'PHYSIOLOGICAL DISORDER • Araceae',
-        classification: 'Non-Pathogenic Oedema',
-        confidence: '91.4%',
-        score: 38,
-        stage: 'STAGE 1: MILD CHLOROSIS',
-        alert: 'WATERING ADJUSTMENT',
-        microclimate: '55% RH • 23.5°C',
-        summary: 'Soil saturation preventing root oxygen uptake. Reduce watering cadence and aerate potting soil.',
-        image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=800&auto=format&fit=crop'
+      monstera: {
+        is_plant: true,
+        common_name: "Monstera Deliciosa",
+        scientific_name: "Monstera deliciosa",
+        family: "Araceae",
+        plant_type: "houseplant",
+        confidence: 93,
+        health_status: "stressed",
+        disease_name: "Chlorosis & Oedema (Overwatering)",
+        disease_confidence: 88,
+        symptoms_seen: [
+          "Pale yellowing lower leaves with soft brown margins",
+          "Lack of aeration in potting substrate"
+        ],
+        severity: 38,
+        likely_causes: [
+          "Soil remaining waterlogged for multiple days without drainage",
+          "Lack of oxygen uptake by root hairs"
+        ],
+        treatment_steps: [
+          "Withhold watering until top 2-3 inches of potting mix dry completely",
+          "Ensure pot has active bottom drainage holes",
+          "Aerate root zone gently with a clean wooden skewer"
+        ],
+        prevention_tips: [
+          "Repot into chunky aroid mix (bark, perlite, coco coir)",
+          "Check soil moisture before every watering cycle"
+        ],
+        alternatives: [],
+        imageUrl: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=800&auto=format&fit=crop"
       },
-      healthy_wheat: {
-        crop: 'Golden Wheat • Field A',
-        name: 'Healthy Crop (No Disease)',
-        scientific: 'Triticum aestivum',
-        family: 'PATHOLOGICAL ID • Poaceae Family',
-        classification: 'Pathogen Free',
-        confidence: '98.9%',
-        score: 12,
-        stage: 'OPTIMAL VIGOUR',
-        alert: 'OPTIMAL CONDITION',
-        microclimate: '58% RH • 21.0°C',
-        summary: 'High chlorophyll index; no necrotic rings or sporulation detected across any sampled stems.',
-        image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop'
+      wheat: {
+        is_plant: true,
+        common_name: "Golden Wheat",
+        scientific_name: "Triticum aestivum",
+        family: "Poaceae",
+        plant_type: "crop",
+        confidence: 98,
+        health_status: "healthy",
+        disease_name: null,
+        disease_confidence: 0,
+        symptoms_seen: [],
+        severity: 0,
+        likely_causes: [],
+        treatment_steps: [
+          "Maintain current balanced irrigation and sun exposure",
+          "Apply light compost top-dressing during tillering phase"
+        ],
+        prevention_tips: [
+          "Monitor weekly for rust fungi and aphid colonies",
+          "Ensure soil drainage during heavy rainfall"
+        ],
+        alternatives: [],
+        imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop"
       }
     };
 
-    let activeSpecimenKey = 'early_blight';
+    // On Load Initialization
+    window.addEventListener('DOMContentLoaded', async () => {
+      loadSavedGarden();
+      loadSavedApiKey();
+      checkBackendHealth();
+      await fetchDatasets();
+      renderDashboard();
+      renderPlantLibrary();
+      renderMyGarden();
+      setupDragAndDrop();
+    });
 
-    // Screen Navigation
-    function goToScreen(screenId) {
+    // Check Backend Server Health
+    async function checkBackendHealth() {
+      const dot = document.getElementById('backendDot');
+      const text = document.getElementById('backendStatusText');
+      try {
+        const res = await fetch(`${API_BASE}/health`, { method: 'GET' });
+        if (res.ok) {
+          const data = await res.json();
+          dot.style.background = 'var(--accent-bright)';
+          text.innerText = data.gemini_api_configured ? 'FastAPI + Gemini Ready' : 'FastAPI Ready (No Key)';
+        } else {
+          throw new Error('Not 200');
+        }
+      } catch (err) {
+        dot.style.background = 'var(--alert-red)';
+        text.innerText = 'Backend Offline';
+        document.getElementById('backendSubText').innerText = 'Run: python -m uvicorn backend.main:app';
+      }
+    }
+
+    // Load Datasets from HTTP Server
+    async function fetchDatasets() {
+      try {
+        const plantsRes = await fetch('/data/plants.json');
+        if (plantsRes.ok) {
+          plantsDb = await plantsRes.json();
+          document.getElementById('libraryCountBadge').innerText = plantsDb.length;
+        }
+
+        const diseasesRes = await fetch('/data/diseases.json');
+        if (diseasesRes.ok) {
+          diseasesDb = await diseasesRes.json();
+        }
+      } catch (e) {
+        console.warn('Could not load JSON datasets from server, using fallback data.', e);
+      }
+    }
+
+    // Fuzzy Match Plant against Database
+    function findDbMatch(commonName, scientificName) {
+      if (!plantsDb.length) return null;
+      const c = (commonName || '').toLowerCase().trim();
+      const s = (scientificName || '').toLowerCase().trim();
+
+      for (let p of plantsDb) {
+        if (p.common_name.toLowerCase() === c || p.scientific_name.toLowerCase() === s) return p;
+      }
+      for (let p of plantsDb) {
+        const pCommon = p.common_name.toLowerCase();
+        const pSci = p.scientific_name.toLowerCase();
+        if (pCommon.includes(c) || c.includes(pCommon)) return p;
+        if (pSci.includes(s) || s.includes(pSci)) return p;
+        if (p.local_names) {
+          for (let val of Object.values(p.local_names)) {
+            if (typeof val === 'string' && val.toLowerCase().includes(c)) return p;
+          }
+        }
+      }
+      return null;
+    }
+
+    // Navigation Switcher
+    function switchViewScreen(screenId) {
       document.querySelectorAll('.screen-container').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-tab-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
 
       const target = document.getElementById('screen-' + screenId);
-      if (target) {
-        target.classList.add('active');
-      }
+      if (target) target.classList.add('active');
 
-      // Update bottom nav highlighting
-      if (screenId === 'home') document.getElementById('navHome')?.classList.add('active');
-      if (screenId === 'scan') document.getElementById('navScanTab')?.classList.add('active');
-      if (screenId === 'history') document.getElementById('navHistory')?.classList.add('active');
+      const sideLink = document.getElementById('slink-' + screenId);
+      if (sideLink) sideLink.classList.add('active');
 
-      // Scroll top
-      if (target) target.scrollTop = 0;
+      if (screenId === 'home') document.getElementById('mNavHome')?.classList.add('active');
+      if (screenId === 'garden') document.getElementById('mNavGarden')?.classList.add('active');
+      if (screenId === 'library') document.getElementById('mNavLibrary')?.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Load Pre-configured Specimen
-    function loadSpecimen(key, btn) {
-      activeSpecimenKey = key;
-      document.querySelectorAll('.specimen-pill').forEach(el => el.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+    // Viewport Mode Switcher (Desktop Website vs Mobile Simulation)
+    function setAppViewportMode(mode, btn) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const layoutWrap = document.getElementById('mainLayoutWrap');
 
-      const data = specimens[key];
-      if (data) {
-        document.getElementById('scannerImgFeed').src = data.image;
-        document.getElementById('currentCropLabel').innerText = data.crop;
-        document.getElementById('liveDetectionTag').innerHTML = `<span>✓</span> ${data.name} • ${data.confidence} Conf.`;
-        showToast(`🔬 Specimen Loaded: ${data.name}`);
+      if (mode === 'mobile') {
+        layoutWrap.className = 'mobile-simulation-container';
+      } else {
+        layoutWrap.className = 'desktop-layout';
       }
     }
 
-    // Trigger AI Scan from Viewfinder
-    function triggerScanDiagnosis() {
-      showToast('🧠 Scanning leaf spectral signature...');
-      setTimeout(() => {
-        openDiagnosis(activeSpecimenKey);
-      }, 700);
-    }
-
-    // Open Diagnosis Report Screen with Specimen Details
-    function openDiagnosis(key) {
-      if (key === 'tomato') key = 'early_blight';
-      if (key === 'maize' || key === 'wheat') key = 'healthy_wheat';
-      if (key === 'monstera') key = 'yellowing_leaf';
-
-      const data = specimens[key] || specimens.early_blight;
-
-      document.getElementById('diagConfidenceHeader').innerText = `VERIFIED ${data.confidence} AI CONFIDENCE`;
-      document.getElementById('diagBreadcrumbs').innerHTML = `<span>${data.crop}</span> • <span>Plot 4B Dynamics</span> • <span>#AB-8942</span>`;
-      document.getElementById('diagHeroImage').style.backgroundImage = `url('${data.image}')`;
-      document.getElementById('diagStageBadge').innerHTML = `<span>⚠️</span> ${data.stage}`;
-      document.getElementById('diagFamilyId').innerText = data.family;
-      document.getElementById('diagDiseaseTitle').innerText = data.name;
-      document.getElementById('diagScientific').innerText = data.scientific;
-      document.getElementById('diagClassification').innerText = data.classification;
-      document.getElementById('diagMicroclimate').innerText = data.microclimate;
-      document.getElementById('diagAlertLevel').innerHTML = `<span>●</span> ${data.alert}`;
-      document.getElementById('diagScoreNumber').innerHTML = `${data.score} <span>/ 100</span>`;
-      document.getElementById('diagSeveritySummary').innerText = data.summary;
-
-      // Adjust risk gauge
-      const gauge = document.getElementById('diagGaugeSvg');
-      if (gauge) {
-        const offset = 226 - (226 * (data.score / 100));
-        gauge.style.strokeDashoffset = offset;
-        gauge.style.stroke = data.score > 50 ? 'var(--alert-red)' : 'var(--accent-bright)';
-      }
-
-      goToScreen('diagnosis');
-    }
-
-    // Custom Photo Upload
-    function handleUserPhotoUpload(event) {
+    // Real Photo Upload Handler
+    async function handleRealPhotoSelected(event) {
       const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('scannerImgFeed').src = e.target.result;
-          specimens.custom = {
-            crop: 'User Leaf Sample • ' + file.name.substring(0, 15),
-            name: 'Detected Symptoms: Chlorosis & Spotting',
-            scientific: 'Phytosanitary AI Analysis',
-            family: 'PATHOLOGICAL ID • Cultivated Flora',
-            classification: 'Bacterial / Fungal Mixed Symptom',
-            confidence: '95.4%',
-            score: 58,
-            stage: 'STAGE 2: VISIBLE LESIONS',
-            alert: 'ACTION RECOMMENDED',
-            microclimate: 'Ambient Indoor / Outdoor',
-            summary: 'Concentric lesions with margin discoloration identified. Begin targeted isolation and sanitization.',
-            image: e.target.result
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const imgDataUrl = e.target.result;
+        document.getElementById('scannerImgFeed').src = imgDataUrl;
+        document.getElementById('scannerHudCrop').innerText = file.name.substring(0, 16);
+        document.getElementById('liveReticlePill').innerHTML = `<span>⏳</span> Transmitting to AI...`;
+        await executeBackendAnalysis(file, imgDataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Drag and Drop Handler
+    function setupDragAndDrop() {
+      const dropArea = document.getElementById('dropArea');
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, e => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, false);
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'), false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'), false);
+      });
+
+      dropArea.addEventListener('drop', async (e) => {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = async function(ev) {
+            document.getElementById('scannerImgFeed').src = ev.target.result;
+            await executeBackendAnalysis(file, ev.target.result);
           };
-          activeSpecimenKey = 'custom';
-          document.getElementById('liveDetectionTag').innerHTML = `<span>✓</span> Custom Photo Analyzed • 95.4% Conf.`;
-          showToast('📸 Custom leaf photo uploaded successfully!');
-          setTimeout(() => {
-            openDiagnosis('custom');
-          }, 800);
-        };
-        reader.readAsDataURL(file);
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Execute Real Backend AI Analysis
+    async function executeBackendAnalysis(file, previewUrl) {
+      const overlay = document.getElementById('scannerLoadingOverlay');
+      overlay.style.display = 'flex';
+      document.getElementById('loadingStatusText').innerText = 'Sending to Gemini 2.5 Flash Vision...';
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const customKey = localStorage.getItem('plow_gemini_key') || '';
+      const headers = {};
+      if (customKey) {
+        headers['X-Gemini-Key'] = customKey;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/analyze`, {
+          method: 'POST',
+          headers: headers,
+          body: formData
+        });
+
+        if (response.status === 503) {
+          overlay.style.display = 'none';
+          showToast('🔑 Please provide your Gemini API key in settings or backend/.env');
+          openSettingsModal();
+          return;
+        }
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.detail || `Server responded with ${response.status}`);
+        }
+
+        const result = await response.json();
+        overlay.style.display = 'none';
+        result.imageUrl = previewUrl;
+        renderDiagnosisReport(result);
+        switchViewScreen('diagnosis');
+        showToast('✓ AI Diagnosis Complete!');
+      } catch (err) {
+        overlay.style.display = 'none';
+        console.error('Diagnosis error:', err);
+        showToast(`❌ Diagnosis failed: ${err.message}`);
+        // Fallback info notice
+        alert(`Could not connect to FastAPI backend at ${API_BASE}.
+Please ensure the backend is running with:
+python -m uvicorn backend.main:app --port 8000
+
+Error: ${err.message}`);
       }
     }
 
-    // Spectral Filter Switcher
-    function setFilterMode(mode, btn) {
-      document.querySelectorAll('.mode-tab').forEach(el => el.classList.remove('active'));
-      btn.classList.add('active');
+    // Trigger Current Feed
+    function triggerAnalyzeFromCurrentFeed() {
+      showToast('📸 Please upload a leaf photo or pick a demo specimen below.');
+      document.getElementById('leafFileInput').click();
+    }
 
-      const img = document.getElementById('scannerImgFeed');
-      if (mode === 'ndvi') {
-        img.style.filter = 'contrast(170%) saturate(220%) hue-rotate(90deg)';
-        showToast('🛰️ NDVI Simulated: Visualizing relative chlorophyll density');
-      } else if (mode === 'thermal') {
-        img.style.filter = 'invert(80%) hue-rotate(180deg) contrast(150%)';
-        showToast('🌡️ Thermal Stress View: Identifying evapotranspiration cold spots');
+    // Load Labeled Demo Specimen (Offline Preview)
+    function loadDemoSpecimen(key) {
+      const spec = demoSpecimens[key];
+      if (!spec) return;
+      document.getElementById('scannerImgFeed').src = spec.imageUrl;
+      document.getElementById('scannerHudCrop').innerText = `Demo: ${spec.common_name}`;
+      showToast(`🔬 Loaded offline demo: ${spec.common_name}`);
+      setTimeout(() => {
+        renderDiagnosisReport(spec);
+        switchViewScreen('diagnosis');
+      }, 350);
+    }
+
+    // Render Diagnosis Report Screen (Strict adherence to User's Rules)
+    function renderDiagnosisReport(data) {
+      currentDiagnosis = data;
+      const isPlant = data.is_plant !== false;
+      const isHealthy = data.health_status === 'healthy';
+      const isLowConf = (data.confidence || 0) < 60;
+
+      // Header Confidence
+      document.getElementById('diagConfidenceVal').innerText = `${data.confidence || 90}% AI CONFIDENCE`;
+
+      // 1. Plant Identity FIRST
+      document.getElementById('diagCommonName').innerText = data.common_name || 'Unidentified Flora';
+      document.getElementById('diagScientificName').innerText = data.scientific_name || 'Botanical identification pending';
+      document.getElementById('diagFamilyTag').innerText = (data.family ? `${data.family} Family` : 'Flora Family');
+      document.getElementById('diagTypeTag').innerText = (data.plant_type ? data.plant_type.toUpperCase() : 'PLANT');
+
+      // 2. Check Database Match
+      const matchedSpecies = findDbMatch(data.common_name, data.scientific_name);
+      const dbBadge = document.getElementById('diagDbMatchBadge');
+      const dbCareCard = document.getElementById('diagDbCareCard');
+
+      if (matchedSpecies) {
+        dbBadge.className = 'badge-pill badge-verified-db';
+        dbBadge.innerText = '✓ Verified Botany DB Match';
+        dbCareCard.style.display = 'block';
+
+        const grid = document.getElementById('diagDbCareGrid');
+        grid.innerHTML = `
+          <div><strong>💧 Water Cadence:</strong> Every ${matchedSpecies.water_frequency_days} days<br><span style="color:var(--text-muted);">${matchedSpecies.water_notes || ''}</span></div>
+          <div><strong>☀️ Sunlight:</strong> ${matchedSpecies.light || 'Bright indirect'}</div>
+          <div><strong>🌱 Soil Mix:</strong> ${matchedSpecies.soil || 'Well-draining loamy'}</div>
+          <div><strong>🐾 Pet Toxicity:</strong> ${matchedSpecies.toxicity_pets || 'Non-toxic'}</div>
+          <div><strong>💡 Fun Fact:</strong> ${matchedSpecies.fun_fact || 'Revered botanical species.'}</div>
+        `;
       } else {
-        img.style.filter = 'brightness(0.92)';
-        showToast('🌿 RGB Natural Color Spectrum');
+        dbBadge.className = 'badge-pill badge-unverified';
+        dbBadge.innerText = 'ℹ️ Care data from AI (Not verified in DB)';
+        dbCareCard.style.display = 'none';
       }
-    }
 
-    // Switch View Mode: Mobile Frame vs Desktop
-    function setViewMode(mode, btn) {
-      document.querySelectorAll('.view-btn').forEach(el => el.classList.remove('active'));
-      btn.classList.add('active');
-
-      const viewport = document.getElementById('appViewport');
-      if (mode === 'desktop') {
-        viewport.classList.add('desktop-view');
+      // 3. Non-Plant Banner Check
+      const nonPlantBanner = document.getElementById('diagNonPlantBanner');
+      if (!isPlant) {
+        nonPlantBanner.style.display = 'flex';
+        document.getElementById('diagNonPlantText').innerText = `Subject detected as "${data.common_name}". Please upload a photo of living plant foliage.`;
       } else {
-        viewport.classList.remove('desktop-view');
+        nonPlantBanner.style.display = 'none';
+      }
+
+      // 4. Low Confidence Banner Check
+      const lowConfBanner = document.getElementById('diagLowConfidenceBanner');
+      if (isLowConf && isPlant) {
+        lowConfBanner.style.display = 'flex';
+        const altContainer = document.getElementById('diagAlternativesList');
+        altContainer.innerHTML = '';
+        if (data.alternatives && data.alternatives.length > 0) {
+          data.alternatives.forEach(alt => {
+            const span = document.createElement('span');
+            span.className = 'badge-pill badge-family';
+            span.innerText = `${alt.name || alt} (${alt.confidence || 50}%)`;
+            altContainer.appendChild(span);
+          });
+        }
+      } else {
+        lowConfBanner.style.display = 'none';
+      }
+
+      // 5. Healthy State Banner Check
+      const healthyBanner = document.getElementById('diagHealthyBanner');
+      const detailsSection = document.getElementById('diagDiseaseDetailsSection');
+
+      if (isHealthy && isPlant) {
+        healthyBanner.style.display = 'flex';
+        document.getElementById('diagHealthStatusHeader').innerHTML = `<span>✓</span> OPTIMAL HEALTH`;
+        document.getElementById('diagDiseaseName').innerText = `Pristine Vigor (No Disease)`;
+        document.getElementById('diagDiseaseConfidence').innerText = `100% Pathogen Free`;
+        document.getElementById('diagSeverityScore').innerText = `0 / 100`;
+        document.getElementById('diagSeverityScore').style.color = 'var(--accent-bright)';
+        document.getElementById('diagSeveritySummary').innerText = `Cellular structure and chlorophyll distribution are optimal. No intervention needed!`;
+
+        // Render Healthy treatment
+        document.getElementById('diagSymptomsList').innerHTML = `<div class="symptom-item"><span class="symptom-bullet">✓</span> Vibrant chlorophyll distribution with no necrosis or chlorosis.</div>`;
+        document.getElementById('diagCausesList').innerHTML = `<div class="symptom-item"><span class="symptom-bullet">✓</span> Optimal irrigation, light exposure, and root aeration.</div>`;
+        document.getElementById('diagTreatmentList').innerHTML = `
+          <div class="step-item"><div class="step-num">1</div><div>Continue your scheduled watering cadence.</div></div>
+          <div class="step-item"><div class="step-num">2</div><div>Wipe dust off foliage gently with a damp cloth every fortnight.</div></div>
+        `;
+        document.getElementById('diagPreventionList').innerHTML = `
+          <div class="step-item"><div class="step-num">1</div><div>Inspect leaf undersides weekly for early aphid or mite sightings.</div></div>
+        `;
+      } else if (isPlant) {
+        healthyBanner.style.display = 'none';
+        document.getElementById('diagHealthStatusHeader').innerHTML = `<span>●</span> PATHOLOGY DIAGNOSED`;
+        document.getElementById('diagDiseaseName').innerText = data.disease_name || 'Phytosanitary Issue';
+        document.getElementById('diagDiseaseConfidence').innerText = `${data.disease_confidence || 85}% Certainty`;
+        document.getElementById('diagSeverityScore').innerText = `${data.severity || 50} / 100`;
+        document.getElementById('diagSeverityScore').style.color = (data.severity > 50 ? 'var(--alert-red)' : 'var(--warning-amber)');
+        document.getElementById('diagSeveritySummary').innerText = `Active tissue damage detected. Proceed with the actionable treatment plan below.`;
+
+        // Symptoms
+        const symptoms = data.symptoms_seen || ['Tissue discoloration observed'];
+        document.getElementById('diagSymptomsList').innerHTML = symptoms.map(s => `
+          <div class="symptom-item"><span class="symptom-bullet">•</span> ${s}</div>
+        `).join('');
+
+        // Causes
+        const causes = data.likely_causes || ['Environmental microclimate factor'];
+        document.getElementById('diagCausesList').innerHTML = causes.map(c => `
+          <div class="symptom-item"><span class="symptom-bullet">•</span> ${c}</div>
+        `).join('');
+
+        // Treatments
+        const treatments = data.treatment_steps || ['Isolate plant to prevent spore spread.'];
+        document.getElementById('diagTreatmentList').innerHTML = treatments.map((t, idx) => `
+          <div class="step-item"><div class="step-num">${idx + 1}</div><div>${t}</div></div>
+        `).join('');
+
+        // Prevention
+        const preps = data.prevention_tips || ['Avoid overhead wetting of foliage.'];
+        document.getElementById('diagPreventionList').innerHTML = preps.map((p, idx) => `
+          <div class="step-item"><div class="step-num">${idx + 1}</div><div>${p}</div></div>
+        `).join('');
       }
     }
 
-    function toggleFlash() {
-      showToast('⚡ Camera LED Flash toggled');
-    }
-
-    function toggleViewfinderTarget() {
-      showToast('🎯 Target reticle locked on leaf center');
-    }
-
-    function toggleAutoAI() {
-      showToast('✨ Auto-AI Continuous Scanning Active');
-    }
-
+    // Agronomist AI Chat
     function openAgronomistChat() {
       document.getElementById('agronomistModal').classList.add('open');
     }
@@ -2491,46 +2628,416 @@
       document.getElementById('agronomistModal').classList.remove('open');
     }
 
-    function sendAgronomistQuery() {
-      const input = document.getElementById('agronomistQuestion');
-      if (input.value.trim()) {
-        showToast('👨‍🌾 Agronomist reviewing: "' + input.value.trim() + '"');
-        input.value = '';
-        setTimeout(() => {
-          showToast('💡 Agronomist: Apply preventative sulfur spray once rain subsides.');
-        }, 1500);
-      }
-    }
+    async function sendAgronomistMessage() {
+      const input = document.getElementById('agronomistInput');
+      const text = input.value.trim();
+      if (!text) return;
 
-    function addTreatmentReminder() {
-      showToast('⏰ Added 7-Day Liquid Copper Spray to PLOW Care Reminders!');
-    }
+      const chatContainer = document.getElementById('agronomistChatMessages');
 
-    function shareDossier() {
-      if (navigator.share) {
-        navigator.share({
-          title: 'FloraScan Phytosanitary Dossier #AB-8942',
-          text: 'Early Blight (Alternaria solani) detected with 94.2% confidence. Treatment plan active.'
+      // Append User Message
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble user';
+      userBubble.innerText = text;
+      chatContainer.appendChild(userBubble);
+      input.value = '';
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // Loading bubble
+      const aiBubble = document.createElement('div');
+      aiBubble.className = 'chat-bubble ai';
+      aiBubble.innerText = 'Dr. Carter is reviewing your query...';
+      chatContainer.appendChild(aiBubble);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // Context
+      const plantCtx = currentDiagnosis ? {
+        common_name: currentDiagnosis.common_name,
+        health_status: currentDiagnosis.health_status,
+        disease_name: currentDiagnosis.disease_name,
+        severity: currentDiagnosis.severity
+      } : {};
+
+      const customKey = localStorage.getItem('plow_gemini_key') || '';
+      const headers = { 'Content-Type': 'application/json' };
+      if (customKey) headers['X-Gemini-Key'] = customKey;
+
+      try {
+        const response = await fetch(`${API_BASE}/chat`, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            message: text,
+            plant_context: plantCtx
+          })
         });
-      } else {
-        showToast('📋 Diagnosis summary link copied to clipboard!');
+
+        if (response.ok) {
+          const resJson = await response.json();
+          aiBubble.innerText = resJson.reply || 'Check soil drainage and isolate the plant.';
+        } else {
+          aiBubble.innerText = 'Agronomist advice is currently unavailable. Ensure the FastAPI backend is running on port 8000.';
+        }
+      } catch (e) {
+        aiBubble.innerText = 'Unable to reach Dr. Carter. Please verify your internet and backend connection.';
+      }
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Plant Library Screen Logic
+    function renderPlantLibrary() {
+      const grid = document.getElementById('libPlantGrid');
+      grid.innerHTML = '';
+
+      const query = (document.getElementById('libSearchInput')?.value || '').toLowerCase().trim();
+      const filtered = plantsDb.filter(p => {
+        const matchesType = activeFilterType === 'All' || p.type.toLowerCase() === activeFilterType.toLowerCase();
+        if (!matchesType) return false;
+        if (!query) return true;
+
+        const c = p.common_name.toLowerCase();
+        const s = p.scientific_name.toLowerCase();
+        const f = (p.family || '').toLowerCase();
+        if (c.includes(query) || s.includes(query) || f.includes(query)) return true;
+
+        if (p.local_names) {
+          for (let v of Object.values(p.local_names)) {
+            if (typeof v === 'string' && v.toLowerCase().includes(query)) return true;
+          }
+        }
+        return false;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No botanical species matching "${query}".</div>`;
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'plant-card-item';
+        card.onclick = () => openPlantDetailModal(p);
+
+        let icon = '🌿';
+        if (p.type === 'tree') icon = '🌳';
+        if (p.type === 'flower') icon = '🌸';
+        if (p.type === 'crop') icon = '🌾';
+        if (p.type === 'houseplant') icon = '🪴';
+
+        const regional = p.local_names && p.local_names.hindi ? `Hindi: ${p.local_names.hindi}` : (p.family || '');
+
+        card.innerHTML = `
+          <div>
+            <div class="plant-card-top">
+              <span class="plant-card-icon">${icon}</span>
+              <span class="care-tag" style="background:#DCFCE7; color:#15803D;">Water / ${p.water_frequency_days}d</span>
+            </div>
+            <div class="plant-card-name">${p.common_name}</div>
+            <div class="plant-card-sci">${p.scientific_name}</div>
+            <div class="plant-card-regional">${regional}</div>
+          </div>
+          <div class="plant-care-tags">
+            <span class="care-tag">☀️ ${p.light.substring(0, 16)}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function handleLibrarySearch(val) {
+      renderPlantLibrary();
+    }
+
+    function setLibraryTypeFilter(type, btn) {
+      activeFilterType = type;
+      document.querySelectorAll('#libFilterRow .filter-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPlantLibrary();
+    }
+
+    function openPlantDetailModal(p) {
+      const modal = document.getElementById('plantDetailModal');
+      const content = document.getElementById('plantDetailModalContent');
+
+      let localNamesHtml = '';
+      if (p.local_names) {
+        localNamesHtml = Object.entries(p.local_names)
+          .map(([k, v]) => `<div><strong>${k.toUpperCase()}:</strong> ${v}</div>`)
+          .join('');
+      }
+
+      content.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 900; color: var(--surface-dark);">${p.common_name}</h2>
+            <div style="font-size: 13px; font-style: italic; color: var(--text-muted);">${p.scientific_name} • ${p.family || ''}</div>
+          </div>
+          <span style="font-size: 22px; cursor: pointer; color: var(--text-muted);" onclick="closePlantDetailModal()">✕</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; margin-bottom: 16px; background: #F8FAF9; padding: 12px; border-radius: 12px;">
+          <div>💧 <strong>Watering:</strong> Every ${p.water_frequency_days} days</div>
+          <div>☀️ <strong>Sunlight:</strong> ${p.light}</div>
+          <div>🌱 <strong>Soil:</strong> ${p.soil}</div>
+          <div>🌡️ <strong>Temp:</strong> ${p.temperature_range}</div>
+          <div>🐾 <strong>Pet Safety:</strong> ${p.toxicity_pets}</div>
+          <div>🧑 <strong>Human Safety:</strong> ${p.toxicity_humans}</div>
+        </div>
+
+        ${localNamesHtml ? `<div style="font-size: 12px; margin-bottom: 12px; color: var(--accent-emerald);"><strong>Regional Names:</strong> ${localNamesHtml}</div>` : ''}
+
+        <div style="font-size: 13px; line-height: 1.5; margin-bottom: 16px;">
+          <strong>Growth Guidance:</strong><br>${p.growth_notes}<br><br>
+          <strong>Botanical Fun Fact:</strong><br>${p.fun_fact}
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="view-btn" onclick="closePlantDetailModal()">Close</button>
+          <button class="btn-emerald" onclick="addSpeciesToGarden('${p.id}')">
+            <span>+</span> Add to My Garden
+          </button>
+        </div>
+      `;
+      modal.classList.add('open');
+    }
+
+    function closePlantDetailModal() {
+      document.getElementById('plantDetailModal').classList.remove('open');
+    }
+
+    // My Garden Management (Local Persistence)
+    function loadSavedGarden() {
+      const raw = localStorage.getItem('plow_my_garden');
+      if (raw) {
+        try {
+          myGarden = JSON.parse(raw);
+        } catch (e) {
+          myGarden = [];
+        }
+      }
+      if (!myGarden || myGarden.length === 0) {
+        // Pre-populate with starter plants
+        myGarden = [
+          {
+            id: 'g-tulsi',
+            name: 'Sacred Tulsi',
+            species: 'Holy Basil (Tulsi)',
+            scientific: 'Ocimum tenuiflorum',
+            water_frequency_days: 2,
+            last_watered: new Date(Date.now() - 36 * 3600 * 1000).toISOString(),
+            image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&auto=format&fit=crop'
+          },
+          {
+            id: 'g-monstera',
+            name: 'Living Room Monstera',
+            species: 'Monstera Deliciosa',
+            scientific: 'Monstera deliciosa',
+            water_frequency_days: 7,
+            last_watered: new Date().toISOString(),
+            image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=400&auto=format&fit=crop'
+          }
+        ];
+        saveGarden();
+      }
+      document.getElementById('gardenCountBadge').innerText = myGarden.length;
+    }
+
+    function saveGarden() {
+      localStorage.setItem('plow_my_garden', JSON.stringify(myGarden));
+      document.getElementById('gardenCountBadge').innerText = myGarden.length;
+      renderDashboard();
+      renderMyGarden();
+    }
+
+    function addSpeciesToGarden(speciesId) {
+      const sp = plantsDb.find(p => p.id === speciesId);
+      if (!sp) return;
+
+      myGarden.push({
+        id: 'g-' + Date.now(),
+        name: sp.common_name,
+        species: sp.common_name,
+        scientific: sp.scientific_name,
+        water_frequency_days: sp.water_frequency_days || 3,
+        last_watered: new Date().toISOString(),
+        image: 'https://images.unsplash.com/photo-1545241047-6083a3684587?w=400&auto=format&fit=crop'
+      });
+      saveGarden();
+      closePlantDetailModal();
+      showToast(`🪴 Added "${sp.common_name}" to My Garden!`);
+    }
+
+    function addCurrentDiagnosisToGarden() {
+      if (!currentDiagnosis) return;
+      myGarden.push({
+        id: 'g-' + Date.now(),
+        name: currentDiagnosis.common_name || 'My Plant',
+        species: currentDiagnosis.common_name,
+        scientific: currentDiagnosis.scientific_name,
+        water_frequency_days: 3,
+        last_watered: new Date().toISOString(),
+        image: currentDiagnosis.imageUrl || 'https://images.unsplash.com/photo-1545241047-6083a3684587?w=400&auto=format&fit=crop'
+      });
+      saveGarden();
+      showToast(`🪴 Added "${currentDiagnosis.common_name}" to My Garden!`);
+    }
+
+    function markPlantWatered(id) {
+      const p = myGarden.find(x => x.id === id);
+      if (p) {
+        p.last_watered = new Date().toISOString();
+        saveGarden();
+        showToast(`💧 ${p.name} marked as hydrated!`);
       }
     }
 
-    function exportDossier() {
-      showToast('📄 Exporting Phytosanitary PDF Dossier...');
-      setTimeout(() => {
-        showToast('✓ Downloaded: FloraScan_Diagnosis_AB-8942.pdf');
-      }, 1000);
+    function removePlantFromGarden(id) {
+      myGarden = myGarden.filter(x => x.id !== id);
+      saveGarden();
+      showToast('🗑️ Plant removed from garden');
     }
 
+    function renderDashboard() {
+      document.getElementById('dashTotalPlants').innerText = myGarden.length;
+      let urgentCount = 0;
+
+      const container = document.getElementById('dashTaskCards');
+      container.innerHTML = '';
+
+      myGarden.forEach(p => {
+        const last = new Date(p.last_watered || Date.now());
+        const daysPassed = Math.floor((Date.now() - last.getTime()) / (1000 * 60 * 60 * 24));
+        const daysRemaining = (p.water_frequency_days || 3) - daysPassed;
+
+        if (daysRemaining <= 0) urgentCount++;
+
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.innerHTML = `
+          <div class="task-thumb" style="background-image: url('${p.image}');"></div>
+          <div class="task-meta">
+            <div class="task-plant-name">${p.name}</div>
+            <div class="task-desc">${daysRemaining <= 0 ? '<span style="color:var(--alert-red);font-weight:700;">Needs water today!</span>' : `Water in ${daysRemaining} day${daysRemaining > 1 ? 's' : ''}`}</div>
+          </div>
+          <button class="btn-water-action ${daysRemaining <= 0 ? '' : 'done'}" onclick="markPlantWatered('${p.id}')">
+            ${daysRemaining <= 0 ? '💧 Water' : '✓ Done'}
+          </button>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('dashDueWater').innerText = urgentCount;
+    }
+
+    function renderMyGarden() {
+      const grid = document.getElementById('myGardenGrid');
+      grid.innerHTML = '';
+
+      let urgent = 0;
+      let hydrated = 0;
+
+      myGarden.forEach(p => {
+        const last = new Date(p.last_watered || Date.now());
+        const daysPassed = Math.floor((Date.now() - last.getTime()) / (1000 * 60 * 60 * 24));
+        const daysRemaining = (p.water_frequency_days || 3) - daysPassed;
+
+        let badgeClass = 'upcoming-water';
+        let badgeText = `Water in ${daysRemaining}d`;
+        if (daysRemaining <= 0) {
+          badgeClass = 'urgent-water';
+          badgeText = `💧 Overdue (${Math.abs(daysRemaining)}d)`;
+          urgent++;
+        } else {
+          hydrated++;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'garden-plant-card';
+        card.innerHTML = `
+          <div class="garden-card-header">
+            <div>
+              <div style="font-size: 16px; font-weight: 800; color: var(--surface-dark);">${p.name}</div>
+              <div style="font-size: 12px; font-style: italic; color: var(--text-muted);">${p.scientific || p.species}</div>
+            </div>
+            <span class="watering-urgency-badge ${badgeClass}">${badgeText}</span>
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="width: 60px; height: 60px; border-radius: 14px; background-size: cover; background-position: center; background-image: url('${p.image}'); flex-shrink: 0;"></div>
+            <div style="font-size: 12px; color: var(--text-sub);">
+              Water Cadence: Every ${p.water_frequency_days} days<br>
+              Last Hydrated: ${new Date(p.last_watered).toLocaleDateString()}
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-top: 4px;">
+            <button class="btn-emerald" style="flex: 1; padding: 8px 12px; font-size: 12px;" onclick="markPlantWatered('${p.id}')">
+              💧 Mark as Watered
+            </button>
+            <button class="view-btn" style="color: var(--alert-red);" onclick="removePlantFromGarden('${p.id}')">
+              🗑️
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.getElementById('gStatTotal').innerText = myGarden.length;
+      document.getElementById('gStatUrgent').innerText = urgent;
+      document.getElementById('gStatHydrated').innerText = hydrated;
+    }
+
+    // Settings Modal (Gemini API Key)
+    function openSettingsModal() {
+      document.getElementById('settingsModal').classList.add('open');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.remove('open');
+    }
+
+    function loadSavedApiKey() {
+      const key = localStorage.getItem('plow_gemini_key');
+      if (key) {
+        document.getElementById('geminiApiKeyInput').value = key;
+      }
+    }
+
+    function saveGeminiApiKey() {
+      const key = document.getElementById('geminiApiKeyInput').value.trim();
+      localStorage.setItem('plow_gemini_key', key);
+      closeSettingsModal();
+      showToast('✓ Gemini API key saved in browser storage!');
+      checkBackendHealth();
+    }
+
+    // Spectral Filter Switcher in Viewfinder
+    let currentFilter = 'natural';
+    function toggleSpectralFilter() {
+      const img = document.getElementById('scannerImgFeed');
+      if (currentFilter === 'natural') {
+        currentFilter = 'ndvi';
+        img.style.filter = 'contrast(160%) saturate(200%) hue-rotate(90deg)';
+        showToast('🛰️ NDVI Simulated Filter: Active');
+      } else if (currentFilter === 'ndvi') {
+        currentFilter = 'thermal';
+        img.style.filter = 'invert(75%) hue-rotate(180deg) contrast(140%)';
+        showToast('🌡️ Thermal Stress Filter: Active');
+      } else {
+        currentFilter = 'natural';
+        img.style.filter = 'none';
+        showToast('🌿 RGB Natural Color: Active');
+      }
+    }
+
+    // Toast Notification
     function showToast(msg) {
-      const toast = document.getElementById('toastPill');
+      const pill = document.getElementById('toastPill');
       document.getElementById('toastMsg').innerText = msg;
-      toast.style.display = 'flex';
+      pill.style.display = 'flex';
       clearTimeout(window.toastTimer);
       window.toastTimer = setTimeout(() => {
-        toast.style.display = 'none';
+        pill.style.display = 'none';
       }, 2800);
     }
   </script>

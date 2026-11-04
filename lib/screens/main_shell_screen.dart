@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../providers/theme_provider.dart';
+import '../utils/responsive.dart';
 import 'dashboard_screen.dart';
 import 'scanner_screen.dart';
 import 'my_plants_screen.dart';
+import 'plant_library_screen.dart';
 import 'plant_guide_screen.dart';
-import 'add_edit_plant_screen.dart';
 
 class MainShellScreen extends StatefulWidget {
   const MainShellScreen({super.key});
@@ -22,6 +23,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     DashboardScreen(),
     ScannerScreen(),
     MyPlantsScreen(),
+    PlantLibraryScreen(),
     PlantGuideScreen(),
   ];
 
@@ -30,283 +32,186 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final themeProvider = context.watch<ThemeProvider>();
     final isDark = themeProvider.isDarkMode;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isDesktop = constraints.maxWidth >= 850;
-
-        if (isDesktop) {
-          // Desktop / Wide Screen: Side Navigation Rail + Main View
-          return Scaffold(
-            body: Row(
-              children: [
-                // Navigation Rail Sidebar
-                Container(
-                  width: 240,
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkSurface : Colors.white,
-                    border: Border(
-                      right: BorderSide(
-                        color: isDark
-                            ? AppColors.darkBorder
-                            : AppColors.lightBorder,
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.linear(Responsive.clampedTextScale(context)),
+      ),
+      child: ResponsiveBuilder(
+        builder: (context, screenType) {
+          if (screenType == ScreenType.expanded) {
+            // DESKTOP LAYOUT (> 1024px)
+            return Scaffold(
+              body: Row(
+                children: [
+                  // Left Navigation Sidebar
+                  Container(
+                    width: 260,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkSurface : Colors.white,
+                      border: Border(
+                        right: BorderSide(
+                          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      // App Header / Logo
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 28, horizontal: 20),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: AppColors.accentSage,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text('🌱',
-                                  style: TextStyle(fontSize: 24)),
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'PLOW',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 1.5,
-                                    color: isDark
-                                        ? AppColors.accentMint
-                                        : AppColors.primaryDark,
-                                  ),
-                                ),
-                                Text(
-                                  'Plant Care Companion',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                    color: isDark
-                                        ? AppColors.darkTextSecondary
-                                        : AppColors.lightTextSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Add Plant Quick Button
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const AddEditPlantScreen(),
-                                ),
-                              );
-                            },
-                            icon: const Icon(Icons.add_rounded, size: 20),
-                            label: const Text('Add New Plant'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryGreen,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Nav Items
-                      _buildSidebarNavItem(
-                        icon: Icons.dashboard_outlined,
-                        activeIcon: Icons.dashboard_rounded,
-                        title: 'Care Dashboard',
-                        index: 0,
-                        isDark: isDark,
-                      ),
-                      _buildSidebarNavItem(
-                        icon: Icons.camera_alt_outlined,
-                        activeIcon: Icons.camera_alt_rounded,
-                        title: 'AI Scanner',
-                        index: 1,
-                        isDark: isDark,
-                      ),
-                      _buildSidebarNavItem(
-                        icon: Icons.yard_outlined,
-                        activeIcon: Icons.yard_rounded,
-                        title: 'My Garden',
-                        index: 2,
-                        isDark: isDark,
-                      ),
-                      _buildSidebarNavItem(
-                        icon: Icons.menu_book_outlined,
-                        activeIcon: Icons.menu_book_rounded,
-                        title: 'Care Guide',
-                        index: 3,
-                        isDark: isDark,
-                      ),
-
-                      const Spacer(),
-
-                      // Dark Mode Switch & Version
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColors.darkCard
-                                : AppColors.lightBg,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: isDark
-                                  ? AppColors.darkBorder
-                                  : AppColors.lightBorder,
-                            ),
-                          ),
+                    child: Column(
+                      children: [
+                        // App Brand
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryGreen,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Center(
+                                  child: Text('🌿', style: TextStyle(fontSize: 22)),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(
-                                    isDark
-                                        ? Icons.dark_mode_rounded
-                                        : Icons.light_mode_rounded,
-                                    size: 18,
-                                    color: isDark
-                                        ? AppColors.sunYellow
-                                        : AppColors.terracotta,
-                                  ),
-                                  const SizedBox(width: 8),
                                   Text(
-                                    isDark ? 'Dark Mode' : 'Light Mode',
+                                    'FloraScan',
                                     style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: isDark
-                                          ? AppColors.darkTextPrimary
-                                          : AppColors.lightTextPrimary,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: -0.5,
+                                      color: isDark ? AppColors.darkTextPrimary : AppColors.primaryDark,
                                     ),
                                   ),
+                                  const Text(
+                                    'AI Plant Care & Pathology',
+                                    style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                                  ),
                                 ],
-                              ),
-                              Switch(
-                                value: isDark,
-                                activeColor: AppColors.accentMint,
-                                onChanged: (_) => themeProvider.toggleTheme(),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
+                        const Divider(height: 1),
+                        const SizedBox(height: 12),
 
-                // Main Screen Content Area
-                Expanded(
-                  child: _screens[_currentIndex],
+                        // Nav Items
+                        _buildDesktopNavItem(Icons.dashboard_outlined, Icons.dashboard_rounded, 'Dashboard', 0, isDark),
+                        _buildDesktopNavItem(Icons.camera_alt_outlined, Icons.camera_alt_rounded, 'AI Scanner', 1, isDark),
+                        _buildDesktopNavItem(Icons.yard_outlined, Icons.yard_rounded, 'My Garden', 2, isDark),
+                        _buildDesktopNavItem(Icons.local_florist_outlined, Icons.local_florist_rounded, 'Plant Library', 3, isDark),
+                        _buildDesktopNavItem(Icons.menu_book_outlined, Icons.menu_book_rounded, 'Care Guide', 4, isDark),
+
+                        const Spacer(),
+
+                        // Theme & User Settings Footer
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                isDark ? 'Dark Mode' : 'Light Mode',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Switch(
+                                value: isDark,
+                                onChanged: (_) => themeProvider.toggleTheme(),
+                                activeColor: AppColors.primaryLight,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Main Content View (max 1200px centered)
+                  Expanded(
+                    child: SafeArea(
+                      child: ResponsiveContainer(
+                        child: _screens[_currentIndex],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // MOBILE (<600px) & TABLET (600-1024px) FULL SCREEN LAYOUT
+          return Scaffold(
+            body: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 74), // Room for bottom nav bar
+                child: _screens[_currentIndex],
+              ),
+            ),
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: _currentIndex,
+              onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.dashboard_outlined),
+                  selectedIcon: Icon(Icons.dashboard_rounded),
+                  label: 'Home',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.camera_alt_outlined),
+                  selectedIcon: Icon(Icons.camera_alt_rounded),
+                  label: 'Scan',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.yard_outlined),
+                  selectedIcon: Icon(Icons.yard_rounded),
+                  label: 'Garden',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.local_florist_outlined),
+                  selectedIcon: Icon(Icons.local_florist_rounded),
+                  label: 'Library',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.menu_book_outlined),
+                  selectedIcon: Icon(Icons.menu_book_rounded),
+                  label: 'Guide',
                 ),
               ],
             ),
           );
-        }
-
-        // Mobile / Narrow Layout: Standard Scaffold with Bottom Navigation Bar
-        return Scaffold(
-          body: _screens[_currentIndex],
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: _currentIndex,
-            onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.dashboard_outlined),
-                selectedIcon: Icon(Icons.dashboard_rounded),
-                label: 'Dashboard',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.camera_alt_outlined),
-                selectedIcon: Icon(Icons.camera_alt_rounded),
-                label: 'Scan AI',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.yard_outlined),
-                selectedIcon: Icon(Icons.yard_rounded),
-                label: 'My Plants',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.menu_book_outlined),
-                selectedIcon: Icon(Icons.menu_book_rounded),
-                label: 'Care Guide',
-              ),
-            ],
-          ),
-          floatingActionButton: _currentIndex != 2
-              ? FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const AddEditPlantScreen(),
-                      ),
-                    );
-                  },
-                  tooltip: 'Add Plant',
-                  child: const Icon(Icons.add_rounded, size: 28),
-                )
-              : null,
-        );
-      },
+        },
+      ),
     );
   }
 
-  Widget _buildSidebarNavItem({
-    required IconData icon,
-    required IconData activeIcon,
-    required String title,
-    required int index,
-    required bool isDark,
-  }) {
+  Widget _buildDesktopNavItem(
+    IconData icon,
+    IconData activeIcon,
+    String label,
+    int index,
+    bool isDark,
+  ) {
     final isSelected = _currentIndex == index;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () => setState(() => _currentIndex = index),
           borderRadius: BorderRadius.circular(12),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: isSelected
-                  ? (isDark
-                      ? AppColors.darkCard
-                      : AppColors.accentSage.withOpacity(0.5))
+                  ? (isDark ? AppColors.darkCard : AppColors.accentSage.withOpacity(0.5))
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: isSelected
-                  ? Border.all(
-                      color: isDark
-                          ? AppColors.primaryLight.withOpacity(0.4)
-                          : AppColors.primaryGreen.withOpacity(0.3),
-                    )
+                  ? Border.all(color: AppColors.primaryLight.withOpacity(0.5))
                   : null,
             ),
             child: Row(
@@ -314,28 +219,15 @@ class _MainShellScreenState extends State<MainShellScreen> {
                 Icon(
                   isSelected ? activeIcon : icon,
                   size: 20,
-                  color: isSelected
-                      ? (isDark
-                          ? AppColors.accentMint
-                          : AppColors.primaryGreen)
-                      : (isDark
-                          ? AppColors.darkTextSecondary
-                          : AppColors.lightTextSecondary),
+                  color: isSelected ? AppColors.primaryGreen : Colors.grey,
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  title,
+                  label,
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.w500,
-                    color: isSelected
-                        ? (isDark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.primaryDark)
-                        : (isDark
-                            ? AppColors.darkTextSecondary
-                            : AppColors.lightTextSecondary),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? (isDark ? Colors.white : AppColors.primaryDark) : Colors.grey,
                   ),
                 ),
               ],
