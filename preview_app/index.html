@@ -2123,9 +2123,15 @@
         <input type="password" id="geminiApiKeyInput" class="search-input-field" placeholder="AIzaSy..." style="width: 100%;">
       </div>
 
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 6px;">Backend API URL</label>
+        <input type="text" id="backendUrlInput" class="search-input-field" placeholder="http://localhost:8000 (or https://your-backend.onrender.com)" style="width: 100%;">
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Use http://localhost:8000 for local dev, or your free Render.com/Railway URL when hosted live online.</div>
+      </div>
+
       <div style="display: flex; justify-content: flex-end; gap: 8px;">
         <button class="view-btn" onclick="closeSettingsModal()">Cancel</button>
-        <button class="btn-emerald" onclick="saveGeminiApiKey()">Save Key</button>
+        <button class="btn-emerald" onclick="saveSettings()">Save Configuration</button>
       </div>
     </div>
   </div>
@@ -2138,7 +2144,7 @@
 
   <script>
     // Global Application State
-    const API_BASE = 'http://localhost:8000';
+    let API_BASE = localStorage.getItem('plow_backend_url') || 'http://localhost:8000';
     let plantsDb = [];
     let diseasesDb = [];
     let currentDiagnosis = null;
@@ -2272,7 +2278,7 @@
     // On Load Initialization
     window.addEventListener('DOMContentLoaded', async () => {
       loadSavedGarden();
-      loadSavedApiKey();
+      loadSavedSettings();
       checkBackendHealth();
       await fetchDatasets();
       renderDashboard();
@@ -2991,18 +2997,25 @@
       document.getElementById('settingsModal').classList.remove('open');
     }
 
-    function loadSavedApiKey() {
+    function loadSavedSettings() {
       const key = localStorage.getItem('plow_gemini_key');
       if (key) {
         document.getElementById('geminiApiKeyInput').value = key;
       }
+      const backendUrl = localStorage.getItem('plow_backend_url') || 'http://localhost:8000';
+      document.getElementById('backendUrlInput').value = backendUrl;
+      document.getElementById('backendSubText').innerText = backendUrl;
     }
 
-    function saveGeminiApiKey() {
+    function saveSettings() {
       const key = document.getElementById('geminiApiKeyInput').value.trim();
+      const backendUrl = document.getElementById('backendUrlInput').value.trim() || 'http://localhost:8000';
       localStorage.setItem('plow_gemini_key', key);
+      localStorage.setItem('plow_backend_url', backendUrl);
+      API_BASE = backendUrl;
+      document.getElementById('backendSubText').innerText = backendUrl;
       closeSettingsModal();
-      showToast('✓ Gemini API key saved in browser storage!');
+      showToast('✓ Settings saved successfully!');
       checkBackendHealth();
     }
 
