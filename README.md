@@ -1,20 +1,22 @@
-FloraScan • PLOW — AI Plant Care & Phytosanitary Diagnosis
+# 🌿 FloraScan • PLOW — AI Plant Care & Phytosanitary Diagnosis
 
 A modern, responsive **AI Plant Care & Disease Detection Web Application** built with Flutter Web, a FastAPI backend proxy powered by Google Gemini Vision (`gemini-2.5-flash`), and an extensive database of 180+ botanical species and 40 plant diseases.
 
 ---
 
- Live Interactive Demo Link
+## 🌐 Live Website & Demo Link
 
-The local live demo server is **running and accessible**:
- **[http://localhost:8080](http://localhost:8080)**
+The live web application is hosted and accessible at:
+👉 **[https://mokshnath-cirra.github.io/PLOW/](https://mokshnath-cirra.github.io/PLOW/)**
+
+*(For local development, you can also run it locally on http://localhost:8080)*
 
 - **Desktop Website View**: Features an expanded website layout with a left sidebar navigation rail, two-column scanner workbench, searchable plant library grid, and care task management.
 - **Mobile View**: Full-screen responsive mobile interface with glassmorphic bottom navigation and touch-optimized action targets (minimum 48×48dp).
 
 ---
 
- Architecture Overview
+## 🛠️ Architecture Overview
 
 ```
                       ┌───────────────────────────────────────┐
